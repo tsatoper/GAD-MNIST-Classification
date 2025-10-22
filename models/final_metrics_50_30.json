@@ -1,8 +1,0 @@
-{
-    "final_train_loss": 0.00713494781493431,
-    "final_test_loss": 0.30461225705221295,
-    "final_train_acc": 100.0,
-    "final_test_acc": 92.1,
-    "num_epochs": 30,
-    "hidden_dim": 50
-}

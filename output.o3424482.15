@@ -1,0 +1,138 @@
+Job started at Wed 22 Oct 2025 03:03:56 PM MDT
+Running with hidden_dim = 65536
+model made
+Model size: 208.40 MB (0.19 GB)
+Training on device: cuda
+Epoch 1 [0/80] Loss: 2.3108
+Train Epoch 1: Avg Loss: 5.0262, Accuracy: 16/80 (20.00%)
+
+Test set: Avg Loss: 5.8112, Accuracy: 13/20 (65.00%)
+
+Epoch 2 [0/80] Loss: 2.0719
+Train Epoch 2: Avg Loss: 2.1681, Accuracy: 56/80 (70.00%)
+
+Test set: Avg Loss: 4.5755, Accuracy: 12/20 (60.00%)
+
+Epoch 3 [0/80] Loss: 0.6336
+Train Epoch 3: Avg Loss: 0.3318, Accuracy: 71/80 (88.75%)
+
+Test set: Avg Loss: 5.0706, Accuracy: 11/20 (55.00%)
+
+Epoch 4 [0/80] Loss: 1.1656
+Train Epoch 4: Avg Loss: 0.5924, Accuracy: 73/80 (91.25%)
+
+Test set: Avg Loss: 4.3620, Accuracy: 11/20 (55.00%)
+
+Epoch 5 [0/80] Loss: 0.5508
+Train Epoch 5: Avg Loss: 0.2800, Accuracy: 75/80 (93.75%)
+
+Test set: Avg Loss: 4.8722, Accuracy: 10/20 (50.00%)
+
+Epoch 6 [0/80] Loss: 0.2080
+Train Epoch 6: Avg Loss: 0.2155, Accuracy: 75/80 (93.75%)
+
+Test set: Avg Loss: 4.2112, Accuracy: 12/20 (60.00%)
+
+Epoch 7 [0/80] Loss: 0.0036
+Train Epoch 7: Avg Loss: 0.0018, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.9620, Accuracy: 11/20 (55.00%)
+
+Epoch 8 [0/80] Loss: 0.0016
+Train Epoch 8: Avg Loss: 0.0129, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 4.0078, Accuracy: 13/20 (65.00%)
+
+Epoch 9 [0/80] Loss: 0.0126
+Train Epoch 9: Avg Loss: 0.0090, Accuracy: 79/80 (98.75%)
+
+Test set: Avg Loss: 3.3773, Accuracy: 14/20 (70.00%)
+
+Epoch 10 [0/80] Loss: 0.0005
+Train Epoch 10: Avg Loss: 0.0003, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.0073, Accuracy: 14/20 (70.00%)
+
+Epoch 11 [0/80] Loss: 0.0130
+Train Epoch 11: Avg Loss: 0.0065, Accuracy: 79/80 (98.75%)
+
+Test set: Avg Loss: 2.8345, Accuracy: 15/20 (75.00%)
+
+Epoch 12 [0/80] Loss: 0.0020
+Train Epoch 12: Avg Loss: 0.0011, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 2.9274, Accuracy: 16/20 (80.00%)
+
+Epoch 13 [0/80] Loss: 0.0038
+Train Epoch 13: Avg Loss: 0.0020, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.1214, Accuracy: 15/20 (75.00%)
+
+Epoch 14 [0/80] Loss: 0.0019
+Train Epoch 14: Avg Loss: 0.0009, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.3004, Accuracy: 15/20 (75.00%)
+
+Epoch 15 [0/80] Loss: 0.0002
+Train Epoch 15: Avg Loss: 0.0004, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.4523, Accuracy: 15/20 (75.00%)
+
+Epoch 16 [0/80] Loss: 0.0004
+Train Epoch 16: Avg Loss: 0.0002, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.5711, Accuracy: 15/20 (75.00%)
+
+Epoch 17 [0/80] Loss: 0.0003
+Train Epoch 17: Avg Loss: 0.0004, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.6612, Accuracy: 15/20 (75.00%)
+
+Epoch 18 [0/80] Loss: 0.0003
+Train Epoch 18: Avg Loss: 0.0002, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.7256, Accuracy: 15/20 (75.00%)
+
+Epoch 19 [0/80] Loss: 0.0002
+Train Epoch 19: Avg Loss: 0.0002, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.7724, Accuracy: 15/20 (75.00%)
+
+Epoch 20 [0/80] Loss: 0.0001
+Train Epoch 20: Avg Loss: 0.0001, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.8039, Accuracy: 15/20 (75.00%)
+
+Epoch 21 [0/80] Loss: 0.0001
+Train Epoch 21: Avg Loss: 0.0001, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.8245, Accuracy: 15/20 (75.00%)
+
+Epoch 22 [0/80] Loss: 0.0001
+Train Epoch 22: Avg Loss: 0.0001, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.8359, Accuracy: 15/20 (75.00%)
+
+Epoch 23 [0/80] Loss: 0.0000
+Train Epoch 23: Avg Loss: 0.0001, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.8350, Accuracy: 15/20 (75.00%)
+
+Epoch 24 [0/80] Loss: 0.0001
+Train Epoch 24: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.8216, Accuracy: 15/20 (75.00%)
+
+Epoch 25 [0/80] Loss: 0.0000
+Train Epoch 25: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.8079, Accuracy: 15/20 (75.00%)
+
+Epoch 26 [0/80] Loss: 0.0000
+Train Epoch 26: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 3.7946, Accuracy: 15/20 (75.00%)
+
+Epoch 27 [0/80] Loss: 0.0000
+Train Epoch 27: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+

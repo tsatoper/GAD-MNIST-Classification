@@ -1,0 +1,20 @@
+#!/bin/bash
+#PBS -A UCSC0009
+#PBS -N output
+#PBS -q main           
+#PBS -l select=1:ncpus=1:ngpus=1:mem=20GB
+#PBS -l walltime=00:10:00
+#PBS -j oe
+#PBS -J 17-20
+
+
+module load conda  
+conda activate py2d_env
+
+echo "Job started at $(date)"
+python -u /glade/u/home/tsatoperry/GAD/pipeline.py \
+    --job-idx $PBS_ARRAY_INDEX \
+    --output-dir /glade/u/home/tsatoperry/GAD/models/samples80
+    
+echo "Job ended at $(date)"
+

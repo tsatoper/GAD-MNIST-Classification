@@ -1,0 +1,138 @@
+Job started at Wed 22 Oct 2025 03:05:18 PM MDT
+Running with hidden_dim = 1048576
+model made
+Model size: 3334.47 MB (3.11 GB)
+Training on device: cuda
+Epoch 1 [0/80] Loss: 2.3360
+Train Epoch 1: Avg Loss: 82.1573, Accuracy: 8/80 (10.00%)
+
+Test set: Avg Loss: 104.5259, Accuracy: 5/20 (25.00%)
+
+Epoch 2 [0/80] Loss: 33.2268
+Train Epoch 2: Avg Loss: 33.5200, Accuracy: 41/80 (51.25%)
+
+Test set: Avg Loss: 43.4450, Accuracy: 5/20 (25.00%)
+
+Epoch 3 [0/80] Loss: 14.7145
+Train Epoch 3: Avg Loss: 13.7196, Accuracy: 62/80 (77.50%)
+
+Test set: Avg Loss: 48.7322, Accuracy: 11/20 (55.00%)
+
+Epoch 4 [0/80] Loss: 9.9966
+Train Epoch 4: Avg Loss: 4.9985, Accuracy: 69/80 (86.25%)
+
+Test set: Avg Loss: 40.7895, Accuracy: 13/20 (65.00%)
+
+Epoch 5 [0/80] Loss: 1.2345
+Train Epoch 5: Avg Loss: 0.6173, Accuracy: 75/80 (93.75%)
+
+Test set: Avg Loss: 43.2062, Accuracy: 12/20 (60.00%)
+
+Epoch 6 [0/80] Loss: 2.3548
+Train Epoch 6: Avg Loss: 1.1774, Accuracy: 74/80 (92.50%)
+
+Test set: Avg Loss: 44.8751, Accuracy: 11/20 (55.00%)
+
+Epoch 7 [0/80] Loss: 0.1206
+Train Epoch 7: Avg Loss: 0.0603, Accuracy: 78/80 (97.50%)
+
+Test set: Avg Loss: 42.7723, Accuracy: 11/20 (55.00%)
+
+Epoch 8 [0/80] Loss: 0.3126
+Train Epoch 8: Avg Loss: 0.1563, Accuracy: 79/80 (98.75%)
+
+Test set: Avg Loss: 42.0009, Accuracy: 11/20 (55.00%)
+
+Epoch 9 [0/80] Loss: 0.0000
+Train Epoch 9: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 42.1337, Accuracy: 11/20 (55.00%)
+
+Epoch 10 [0/80] Loss: 0.0000
+Train Epoch 10: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 42.7151, Accuracy: 11/20 (55.00%)
+
+Epoch 11 [0/80] Loss: 0.0424
+Train Epoch 11: Avg Loss: 0.0359, Accuracy: 79/80 (98.75%)
+
+Test set: Avg Loss: 40.5238, Accuracy: 14/20 (70.00%)
+
+Epoch 12 [0/80] Loss: 0.0000
+Train Epoch 12: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 39.2828, Accuracy: 14/20 (70.00%)
+
+Epoch 13 [0/80] Loss: 0.0593
+Train Epoch 13: Avg Loss: 0.0297, Accuracy: 79/80 (98.75%)
+
+Test set: Avg Loss: 40.2050, Accuracy: 12/20 (60.00%)
+
+Epoch 14 [0/80] Loss: 0.0000
+Train Epoch 14: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 44.0395, Accuracy: 11/20 (55.00%)
+
+Epoch 15 [0/80] Loss: 0.0000
+Train Epoch 15: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 52.6421, Accuracy: 12/20 (60.00%)
+
+Epoch 16 [0/80] Loss: 0.0000
+Train Epoch 16: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 60.2197, Accuracy: 12/20 (60.00%)
+
+Epoch 17 [0/80] Loss: 0.0000
+Train Epoch 17: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 66.7121, Accuracy: 12/20 (60.00%)
+
+Epoch 18 [0/80] Loss: 0.0002
+Train Epoch 18: Avg Loss: 0.1055, Accuracy: 79/80 (98.75%)
+
+Test set: Avg Loss: 49.5584, Accuracy: 11/20 (55.00%)
+
+Epoch 19 [0/80] Loss: 0.0005
+Train Epoch 19: Avg Loss: 0.0002, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 42.2112, Accuracy: 12/20 (60.00%)
+
+Epoch 20 [0/80] Loss: 0.7763
+Train Epoch 20: Avg Loss: 1.5495, Accuracy: 76/80 (95.00%)
+
+Test set: Avg Loss: 40.6180, Accuracy: 13/20 (65.00%)
+
+Epoch 21 [0/80] Loss: 0.0000
+Train Epoch 21: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 49.8471, Accuracy: 12/20 (60.00%)
+
+Epoch 22 [0/80] Loss: 0.0000
+Train Epoch 22: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 65.4495, Accuracy: 12/20 (60.00%)
+
+Epoch 23 [0/80] Loss: 1.7621
+Train Epoch 23: Avg Loss: 0.9229, Accuracy: 76/80 (95.00%)
+
+Test set: Avg Loss: 49.4950, Accuracy: 13/20 (65.00%)
+
+Epoch 24 [0/80] Loss: 0.0000
+Train Epoch 24: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 47.8348, Accuracy: 12/20 (60.00%)
+
+Epoch 25 [0/80] Loss: 3.3478
+Train Epoch 25: Avg Loss: 1.6744, Accuracy: 77/80 (96.25%)
+
+Test set: Avg Loss: 46.5697, Accuracy: 11/20 (55.00%)
+
+Epoch 26 [0/80] Loss: 0.0000
+Train Epoch 26: Avg Loss: 0.0000, Accuracy: 80/80 (100.00%)
+
+Test set: Avg Loss: 47.1190, Accuracy: 11/20 (55.00%)
+
+Epoch 27 [0/80] Loss: 0.0000
+Traceback (most recent call last):
+
