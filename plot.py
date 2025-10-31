@@ -3,8 +3,8 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-plot_id = 'epoch1000_noise10_CEL'
-dir_name = f'../models/{plot_id}'
+plot_id = 'epoch1000_noise00'
+dir_name = f'./models/{plot_id}'
 
 if not os.path.exists(dir_name):
     print(f"Warning: Directory '{dir_name}' not found, skipping...")

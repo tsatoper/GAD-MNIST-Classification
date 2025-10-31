@@ -20,16 +20,14 @@ parser.add_argument('--job-idx', type=int, required=True)
 parser.add_argument('--output-dir', type=str, default='./outputs')
 args = parser.parse_args()
 
-# hidden_dim_list = [2**i for i in range(1, 23)] #small: 0-57
 hidden_dim_list = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38,
-                 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-                 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150]
+                 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59] + [5*i for i in range(12, 71)]
 hidden_dim = int(hidden_dim_list[args.job_idx])
 
 num_epochs = 2000
 samples = 4000
 batch_size = 128
-noise_portion = 0.10
+noise_portion = 0.0 #0.10
 num_noised = int(samples * noise_portion)
 
 
