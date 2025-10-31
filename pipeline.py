@@ -20,7 +20,7 @@ parser.add_argument('--job-idx', type=int, required=True)
 parser.add_argument('--output-dir', type=str, default='./outputs')
 args = parser.parse_args()
 
-hidden_dim_list = [i for i in range(1, 30)] + [5*i for i in range(30//5, 100//5)] + [20*i for i in range(100//20, 1000//20)]
+hidden_dim_list = [i for i in range(1, 30)] + [5*i for i in range(30//5, 100//5)] + [20*i for i in range(100//20, 1000//20)] + [100*i for i in range(1000//100, 5000//100)]
 hidden_dim = int(hidden_dim_list[args.job_idx])
 
 num_epochs = 2000

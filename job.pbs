@@ -5,7 +5,7 @@
 #PBS -l select=1:ncpus=4:ngpus=1:mem=5GB
 #PBS -l walltime=00:59:00
 #PBS -j oe
-#PBS -J 0-87
+#PBS -J 88-138
 
 
 module load conda  
