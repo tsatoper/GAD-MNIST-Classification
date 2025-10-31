@@ -1,0 +1,10 @@
+{
+    "final_train_loss": 5.361403546677579e-07,
+    "final_test_loss": 0.7715829536318779,
+    "final_train_acc": 100.0,
+    "final_test_acc": 92.8,
+    "num_epochs": 2000,
+    "hidden_dim": 4300,
+    "samples": 4000,
+    "num_parameters": 3418510
+}
