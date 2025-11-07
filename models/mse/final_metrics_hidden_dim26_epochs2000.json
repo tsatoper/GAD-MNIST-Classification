@@ -1,0 +1,16 @@
+{
+    "num_epochs": 2000,
+    "hidden_dim": 26,
+    "batch_size": 128,
+    "samples": 4000,
+    "num_parameters": 20680,
+    "loss_function": "mse",
+    "epoch500_train_loss": 0.0055017828271957114,
+    "epoch500_test_loss": 0.025227482663467526,
+    "epoch1000_train_loss": 0.0036336487464723177,
+    "epoch1000_test_loss": 0.030719708651304245,
+    "epoch1500_train_loss": 0.002746863512584241,
+    "epoch1500_test_loss": 0.035439773462712765,
+    "epoch2000_train_loss": 0.0022482109015982132,
+    "epoch2000_test_loss": 0.03965704562142491
+}
