@@ -8,8 +8,8 @@ import json
 directory = '/glade/derecho/scratch/tsatoperry/GAD/models/mse/'
 weight_directory = os.path.join(directory, 'weights')
 cache_path = os.path.join(directory, 'combined_svd_loss_data.pt')
-save_path = 'combined_svd_train_test_loss.png'
-
+yaxis = 'linear'
+save_path = f'combined_svd_train_test_loss_{yaxis}.png'
 epoch = 2000  # single epoch
 
 # ====== Try to load cached tensors ======
@@ -105,13 +105,13 @@ ax1.plot(num_parameters, min_svs, 'o-', linewidth=2, markersize=8,
 ax1.set_xlabel('Number of Parameters', fontsize=13)
 ax1.set_ylabel('Minimum Singular Value', fontsize=13, color='tab:purple')
 ax1.tick_params(axis='y', labelcolor='tab:purple')
-ax1.set_xscale('log')
-ax1.set_yscale('log')
+ax1.set_xscale(yaxis)
+ax1.set_yscale('linear')
 ax1.grid(True, alpha=0.3)
 
 # Secondary axis for loss
 ax2 = ax1.twinx()
-ax2.set_ylabel('Loss (log)', fontsize=13)
+ax2.set_ylabel(f'Loss ({yaxis})', fontsize=13)
 
 # Plot train and test losses
 ax2.plot(num_parameters[:len(train_losses)], train_losses,
@@ -123,7 +123,7 @@ ax2.plot(num_parameters[:len(test_losses)], test_losses,
 
 # Log scales for all axes
 ax2.set_xscale('log')
-ax2.set_yscale('log')
+ax2.set_yscale(yaxis)
 
 # Combine legends
 lines1, labels1 = ax1.get_legend_handles_labels()

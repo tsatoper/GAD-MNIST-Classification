@@ -1,0 +1,21 @@
+#!/bin/bash
+#PBS -A UCSC0009
+#PBS -N output
+#PBS -q main           
+#PBS -l select=1:ncpus=1:ngpus=1:mem=5GB
+#PBS -l walltime=00:59:00
+#PBS -j oe
+# -J 30-32
+
+
+module load conda  
+conda activate py2d_env
+
+echo "Job started at $(date)"
+python -u /glade/derecho/scratch/tsatoperry/GAD/pipeline.py \
+    --job-idx $PBS_ARRAY_INDEX \
+    --output-dir /glade/derecho/scratch/tsatoperry/GAD/models/test \
+    --loss-fn mse
+    
+echo "Job ended at $(date)"
+
