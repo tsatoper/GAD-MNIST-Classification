@@ -25,28 +25,7 @@ else:
     print("No cache found — computing from JSON and weight files...")
 
     # ====== Extract SVD data ======
-    svd_results = {}
-    for filename in os.listdir(weight_directory):
-        if not filename.endswith('.pth'):
-            continue
-
-        match = re.search(r'hidden_dim(\d+)_', filename)
-        if not match:
-            continue
-
-        hidden_dim = int(match.group(1))
-        try:
-            state_dict = torch.load(os.path.join(weight_directory, filename), weights_only=True, map_location='cpu')
-
-            U, S, Vh = torch.svd(state_dict['fc1.weight'])
-            num_params = sum(p.numel() for p in state_dict.values())
-            svd_results[hidden_dim] = (S.cpu().numpy().min(), num_params)
-        except Exception as e:
-            print(f'Error loading {filename}: {e}')
-
-    if len(svd_results) == 0:
-        raise RuntimeError("No valid weight files found for SVD computation.")
-
+    
     # Sort by number of parameters
     sorted_items = sorted(svd_results.items(), key=lambda x: x[1][1])
     num_parameters = torch.tensor([item[1][1] for item in sorted_items], dtype=torch.float32)

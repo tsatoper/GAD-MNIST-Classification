@@ -1,4 +1,5 @@
 import argparse
+import os
 import torch
 import torch.nn as nn
 from utilities import FCNN, test
@@ -78,7 +79,10 @@ U, S, Vh = torch.linalg.svd(all_hidden, full_matrices=False)
 print("Singular values:")
 print(S)
 
-sv_path = f"/glade/derecho/scratch/tsatoperry/GAD/singular_values/mnist_hidden_dim{hidden_dim}_sv.pt"
+
+sv_path = f"/glade/derecho/scratch/tsatoperry/GAD/models/mse/singular_values/hidden_dim{hidden_dim}_sv.pt"
+os.makedirs(f"/glade/derecho/scratch/tsatoperry/GAD/models/mse/singular_values", exist_ok=True)
+
 torch.save(S.cpu(), sv_path)
 
 print(f"Singular values saved to {sv_path}")
