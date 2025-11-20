@@ -1,0 +1,50 @@
+Job started at Thu Nov 20 12:08:28 AM MST 2025
+Selected hidden_dim = 8192 (from job_idx 38)
+Model loaded from /glade/derecho/scratch/tsatoperry/GAD/models/mse/weights/mnist_hidden_dim8192_epochs2000.pth
+Model architecture: input_dim=784, hidden_dim=8192, output_dim=10
+Device: cpu
+Batch 1/39.0
+Batch 2/39.0
+Batch 3/39.0
+Batch 4/39.0
+Batch 5/39.0
+Batch 6/39.0
+Batch 7/39.0
+Batch 8/39.0
+Batch 9/39.0
+Batch 10/39.0
+Batch 11/39.0
+Batch 12/39.0
+Batch 13/39.0
+Batch 14/39.0
+Batch 15/39.0
+Batch 16/39.0
+Batch 17/39.0
+Batch 18/39.0
+Batch 19/39.0
+Batch 20/39.0
+Batch 21/39.0
+Batch 22/39.0
+Batch 23/39.0
+Batch 24/39.0
+Batch 25/39.0
+Batch 26/39.0
+Batch 27/39.0
+Batch 28/39.0
+Batch 29/39.0
+Batch 30/39.0w
+Batch 31/39.0
+Batch 32/39.0
+Batch 33/39.0
+Batch 34/39.0
+Batch 35/39.0
+Batch 36/39.0
+Batch 37/39.0
+Batch 38/39.0
+Batch 39/39.0
+Batch 40/39.0
+Singular values:
+tensor([4.7088e+02, 2.1252e+02, 1.9614e+02,  ..., 4.4710e-06, 3.9481e-06,
+        1.9684e-06])
+Singular values saved to /glade/derecho/scratch/tsatoperry/GAD/models/mse/singular_values/hidden_dim8192_sv.pt
+Job ended at Thu Nov 20 12:11:14 AM MST 2025

@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -A UCSC0009
+#PBS -N output
+#PBS -q main           
+#PBS -l select=1:ncpus=1:mem=20GB
+#PBS -l walltime=00:49:00
+#PBS -j oe
+# -J 0-30
+
+
+module load conda  
+conda activate py2d_env
+
+echo "Job started at $(date)"
+python -u /glade/derecho/scratch/tsatoperry/GAD/save_sv.py \
+    --job-idx $PBS_ARRAY_INDEX \
+    
+echo "Job ended at $(date)"
+

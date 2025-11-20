@@ -24,11 +24,11 @@ parser.add_argument('--loss-fn', type=str, default='mse', choices=['ce', 'mse'],
                     help='Loss function: ce (CrossEntropy) or mse (MSE)')
 args = parser.parse_args()
 
-hidden_dim_list = [i for i in range(1, 29 +1)] + [10*i for i in range(30//10, 70//10)] + [2**i for i in range(6, 25)]  # 0-28, 29-32, 33-51
+hidden_dim_list = [i for i in range(1, 29 +1)] + [2**i for i in range(6, 18)]  # 0-28, 29-32, 33-51
 hidden_dim = int(hidden_dim_list[args.job_idx])
 
 num_epochs = 2000
-samples = 4000
+samples = 3985
 batch_size = 128
 learning_rate = 1e-4
 save_at_this_epoch = [500, 1000, 1500, num_epochs]
