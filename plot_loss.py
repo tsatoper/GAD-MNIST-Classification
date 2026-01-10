@@ -7,7 +7,7 @@ plot_id = 'mse' #'epoch2000_tracking_epoch_loss'
 dir_name = f'./models/{plot_id}'
 
 # Define epochs to plot
-epochs = [500, 2000]
+epochs = [500, 1000, 1500, 2000]
 yscale = 'linear'
 
 # Dictionary to store data for each epoch

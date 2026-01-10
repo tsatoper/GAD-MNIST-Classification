@@ -77,3 +77,8 @@ def test(model, test_loader, loss_fn, device, n_classes=10):
     print(f'\nTest set: Avg Loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} '
           f'({accuracy:.2f}%)\n')
     return test_loss, accuracy
+
+
+if __name__=="__main__":
+    model = FCNN(hidden_dim=1)
+    

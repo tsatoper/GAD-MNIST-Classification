@@ -24,21 +24,19 @@ parser.add_argument('--loss-fn', type=str, default='mse', choices=['ce', 'mse'],
                     help='Loss function: ce (CrossEntropy) or mse (MSE)')
 args = parser.parse_args()
 
-hidden_dim_list = [i for i in range(1, 29 +1)] + [2**i for i in range(6, 18)]  # 0-28, 29-32, 33-51
+hidden_dim_list = [i for i in range(1, 29 +1)] + [2**i for i in range(6, 18)]  # 0-28, 29-40
 hidden_dim = int(hidden_dim_list[args.job_idx])
 
 num_epochs = 2000
-samples = 3985
+samples = 60000
 batch_size = 128
 learning_rate = 1e-4
-save_at_this_epoch = [500, 1000, 1500, num_epochs]
+save_at_this_epoch = [500, 1000, num_epochs]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_fn = nn.CrossEntropyLoss() if args.loss_fn == 'ce' else nn.MSELoss()
 model = FCNN(hidden_dim=hidden_dim).to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
-
-file_id = f'hidden_dim{hidden_dim}_epochs{num_epochs}_{args.loss_fn}'
 
 print(f"Training on device: {device}")
 
@@ -72,26 +70,63 @@ train_dataset = Subset(train_dataset_full, range(samples))
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
 test_dataset_full = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
-test_dataset = Subset(test_dataset_full, range(samples//4))
+n_testing = min(samples//4, 10000)
+test_dataset = Subset(test_dataset_full, range(n_testing))
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-for epoch in range(1, num_epochs + 1):
-    train_loss, train_acc = train(model, train_loader, loss_fn, optimizer, device, epoch)
-    test_loss, test_acc = test(model, test_loader, loss_fn, device)
-    if epoch in save_at_this_epoch:
-        json_input[f'epoch{epoch}_train_loss'] = train_loss
-        json_input[f'epoch{epoch}_test_loss'] = test_loss
-        json_input[f'epoch{epoch}_train_acc'] = train_acc
-        json_input[f'epoch{epoch}_test_acc'] = test_acc
-        
 # SAVING
 os.makedirs(args.output_dir, exist_ok=True)
 os.makedirs(os.path.join(args.output_dir, 'weights'), exist_ok=True)
 
-with open(f'{args.output_dir}/final_metrics_{file_id}.json', 'w') as f:
+# TRAINING
+for epoch in range(1, num_epochs + 1):
+    train_loss, train_acc = train(model, train_loader, loss_fn, optimizer, device, epoch)
+    if epoch in save_at_this_epoch:
+        test_loss, test_acc = test(model, test_loader, loss_fn, device)
+        json_input[f'epoch{epoch}_train_loss'] = train_loss
+        json_input[f'epoch{epoch}_test_loss'] = test_loss
+        json_input[f'epoch{epoch}_train_acc'] = train_acc
+        json_input[f'epoch{epoch}_test_acc'] = test_acc
+        torch.save(model.state_dict(), f'{args.output_dir}/weights/hidden_dim{hidden_dim}_epoch{epoch}.pth')
+       
+with open(f'{args.output_dir}/final_metrics_hidden_dim{hidden_dim}.json', 'w') as f:
     json.dump(json_input, f, indent=4)
 
-print(f"Config and Metrics saved to '{args.output_dir}/final_metrics_{file_id}.json'")
+print(f"Config and Metrics saved to '{args.output_dir}/final_metrics_hidden_dim{hidden_dim}.json'")
 
-torch.save(model.state_dict(), f'{args.output_dir}/weights/mnist_{file_id}.pth')
-print(f"Model saved to '{args.output_dir}/weights/mnist_{file_id}.pth'")
+torch.save(model.state_dict(), f'{args.output_dir}/weights/hidden_dim{hidden_dim}.pth')
+print(f"Model saved to '{args.output_dir}/weights/hidden_dim{hidden_dim}.pth'")
+
+
+# ========== COMPUTE AND SAVE SINGULAR VALUES ==========
+print("\n" + "="*50)
+print("Computing singular values of hidden layer activations...")
+print("="*50)
+
+model.eval()
+all_hidden = []
+
+count = 0
+total_batches = len(test_loader)
+with torch.no_grad():
+    for data, target in test_loader:
+        data, target = data.to(device), target.to(device)
+        _, hidden = model(data, return_hidden=True)
+        all_hidden.append(hidden)
+        count += 1
+        print(f'Batch {count}/{total_batches}')
+
+all_hidden = torch.cat(all_hidden, dim=0)
+print(f"Hidden activations shape: {all_hidden.shape}")
+
+U, S, Vh = torch.linalg.svd(all_hidden, full_matrices=False)
+print("\nSingular values:")
+print(S)
+
+# Save singular values
+sv_dir = os.path.join(args.output_dir, 'singular_values')
+os.makedirs(sv_dir, exist_ok=True)
+sv_path = os.path.join(sv_dir, f'hidden_dim{hidden_dim}_sv.pt')
+
+torch.save(S.cpu(), sv_path)
+print(f"\nSingular values saved to {sv_path}")

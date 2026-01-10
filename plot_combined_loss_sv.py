@@ -7,8 +7,7 @@ import numpy as np
 
 def load_min_singular_values(directory):
     """Load minimum singular values from hidden_dimX_sv.pt files."""
-    pattern = re.compile(r"hidden_dim(\d+)_sv\.pt$")
-    pattern2 = re.compile(r"hidden_dim(\d+)\.pt$")
+    pattern = re.compile(r"hidden_dim(\d+)(?:_sv)?\.pt$")
 
     results = {}
     
@@ -16,7 +15,7 @@ def load_min_singular_values(directory):
         return results
     
     for fname in os.listdir(directory):
-        if (match := pattern.match(fname)) or (match := pattern2.match(fname)):
+        if match := pattern.match(fname):
             hidden_dim = int(match.group(1))
             print(f'{hidden_dim=}')
             try:
@@ -28,8 +27,9 @@ def load_min_singular_values(directory):
     return results
 
 def main():
-    plot_id = 'mse'
-    model_dir = f'./models/{plot_id}'
+    yscale1 = 'linear'
+    yscale2 = 'linear'
+    model_dir = f'./models/mse'
     sv_directory = f"{model_dir}/singular_values"
     
     # Load singular values to filter valid hidden dimensions
@@ -82,10 +82,12 @@ def main():
     ax1.set_ylabel('Loss', fontsize=13, color='#1f77b4')
     ax1.tick_params(axis='y', labelcolor='#1f77b4')
     ax1.set_xscale('log')
+    ax1.set_yscale(yscale1)
     ax1.grid(True, alpha=0.3)
     
     # Plot singular values on right axis
     ax2 = ax1.twinx()
+    ax2.set_yscale(yscale2)
     ax2.plot(num_params, min_svs, '-s', linewidth=2, label='Min Singular Value', alpha=0.8, color='#ff7f0e')
     ax2.set_ylabel('Minimum Singular Value', fontsize=13, color='#ff7f0e')
     ax2.tick_params(axis='y', labelcolor='#ff7f0e')
@@ -95,9 +97,9 @@ def main():
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labels1 + labels2, fontsize=11, loc='best')
     
-    plt.title(f'Train vs Test Loss and Min Singular Value({plot_id})', fontsize=15, fontweight='bold')
+    plt.title(f'Loss {yscale1} and Min Singular Value {yscale2}', fontsize=15, fontweight='bold')
     plt.tight_layout()
-    plt.savefig(f'combined_plot_{plot_id}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'combined_{yscale1}_{yscale2}.png', dpi=300, bbox_inches='tight')
     print(f'Plotted {len(num_params)} models. Saved combined plot.')
 
 if __name__ == "__main__":
