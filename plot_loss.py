@@ -3,15 +3,15 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-plot_id = 'mse' #'epoch2000_tracking_epoch_loss'
+plot_id = 'omni3' 
 dir_name = f'./models/{plot_id}'
 
 # Define epochs to plot
-epochs = [500, 1000, 1500, 2000]
+epochs = [2000]
 yscale = 'linear'
 
 # Dictionary to store data for each epoch
-epoch_data = {epoch: {'num_parameters': [], 'test_losses': [], 'train_losses': []} 
+epoch_data = {epoch: {'hidden_dim': [], 'test_losses': [], 'train_losses': []} 
               for epoch in epochs}
 
 # Read all JSON files
@@ -25,15 +25,16 @@ else:
             try:
                 with open(filepath, 'r') as f:
                     data = json.load(f)
-                num_params = data['num_parameters']
-                
+                hidden_dim = data['hidden_dim']
+                if hidden_dim > 256 or hidden_dim < 64:
+                    continue
                 # Extract metrics for each epoch
                 for epoch in epochs:
                     train_key = f'epoch{epoch}_train_loss'
                     test_key = f'epoch{epoch}_test_loss'
                     
                     if train_key in data and test_key in data:
-                        epoch_data[epoch]['num_parameters'].append(num_params)
+                        epoch_data[epoch]['hidden_dim'].append(hidden_dim)
                         epoch_data[epoch]['train_losses'].append(data[train_key])
                         epoch_data[epoch]['test_losses'].append(data[test_key])
                         
@@ -43,9 +44,9 @@ else:
 
     # Sort data for each epoch
     for epoch in epochs:
-        if len(epoch_data[epoch]['num_parameters']) > 0:
-            sorted_indices = np.argsort(epoch_data[epoch]['num_parameters'])
-            epoch_data[epoch]['num_parameters'] = np.array(epoch_data[epoch]['num_parameters'])[sorted_indices]
+        if len(epoch_data[epoch]['hidden_dim']) > 0:
+            sorted_indices = np.argsort(epoch_data[epoch]['hidden_dim'])
+            epoch_data[epoch]['hidden_dim'] = np.array(epoch_data[epoch]['hidden_dim'])[sorted_indices]
             epoch_data[epoch]['test_losses'] = np.array(epoch_data[epoch]['test_losses'])[sorted_indices]
             epoch_data[epoch]['train_losses'] = np.array(epoch_data[epoch]['train_losses'])[sorted_indices]
 
@@ -56,31 +57,31 @@ else:
     # Define colors for each epoch
     colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
     for idx, epoch in enumerate(epochs):
-        if len(epoch_data[epoch]['num_parameters']) > 0:
-            num_params = epoch_data[epoch]['num_parameters']
+        if len(epoch_data[epoch]['hidden_dim']) > 0:
+            hidden_dim = epoch_data[epoch]['hidden_dim']
             test_losses = epoch_data[epoch]['test_losses']
             train_losses = epoch_data[epoch]['train_losses']
             
             # Plot test losses
-            plt.plot(num_params, test_losses, linestyle='-', 
+            plt.plot(hidden_dim, test_losses, linestyle='-', 
                     linewidth=2, label=f'Epoch {epoch} - Test Loss', 
                     alpha=0.8, color=colors[idx])
-            plt.scatter(num_params, test_losses, s=40, alpha=0.8, 
+            plt.scatter(hidden_dim, test_losses, s=40, alpha=0.8, 
                        zorder=5, color=colors[idx])
             
             # Plot train losses
-            plt.plot(num_params, train_losses, linestyle='--', 
+            plt.plot(hidden_dim, train_losses, linestyle='--', 
                     linewidth=2, label=f'Epoch {epoch} - Train Loss', 
                     alpha=0.6, color=colors[idx])
-            plt.scatter(num_params, train_losses, s=40, alpha=0.6, 
+            plt.scatter(hidden_dim, train_losses, s=40, alpha=0.6, 
                        zorder=5, color=colors[idx])
 
     # Formatting
-    plt.xlabel('Number of Model Parameters', fontsize=13)
+    plt.xlabel('Hidden Dimension', fontsize=13)
     plt.ylabel(f'Loss ({yscale})', fontsize=13)
-    plt.title(f'Train vs Test Loss by Number of Model Parameters ({plot_id})', 
+    plt.title(f'Train vs Test Loss by Hidden Dimension ({plot_id})', 
               fontsize=15, fontweight='bold')
-    plt.legend(fontsize=9, loc='best', ncol=2)
+    # plt.legend(fontsize=9, loc='best', ncol=2)
     plt.grid(True, alpha=0.3)
     plt.xscale('log')
     plt.yscale(yscale)

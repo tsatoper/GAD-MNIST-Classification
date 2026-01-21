@@ -5,7 +5,9 @@
 #PBS -l select=1:ncpus=1:mem=5GB
 #PBS -l walltime=00:09:00
 #PBS -j oe
-# -J 0-30
+# qsub -J 0-40 save_sv.sh
+# qsub -v PBS_ARRAY_INDEX=0 save_sv.sh
+
 
 
 module load conda  

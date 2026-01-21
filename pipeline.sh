@@ -16,7 +16,7 @@ conda activate py2d_env
 echo "Job started at $(date)"
 python -u /glade/derecho/scratch/tsatoperry/GAD/pipeline.py \
     --job-idx $PBS_ARRAY_INDEX \
-    --output-dir /glade/derecho/scratch/tsatoperry/GAD/models/omni \
+    --output-dir /glade/derecho/scratch/tsatoperry/GAD/models/omni3 \
     --loss-fn mse
     
 echo "Job ended at $(date)"
