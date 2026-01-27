@@ -1,4 +1,7 @@
 logs/
+.logs/
 dump/
 *.pth
 *output*
+.tinyimagenet
+data/
