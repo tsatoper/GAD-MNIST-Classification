@@ -7,6 +7,7 @@ import re
 plot_id = 'default'
 dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/models/{plot_id}/metrics'
 
+n_value = 3  # Specify which N value to match
 # Define epochs to plot
 epochs = [100, 1000]
 
@@ -20,34 +21,34 @@ if not os.path.exists(dir_name):
     exit(1)
 
 for filename in os.listdir(dir_name):
-    if filename.endswith('.json') and filename.startswith('w'):
-        filepath = os.path.join(dir_name, filename)
+    # Match pattern: w{width}_ttrain_N{number}.json
+    # Example: w2_ttrain_N2.json
+    match = re.match(rf'w(\d+)_N{n_value}\.json', filename)  
+    if n_value==1:
+              match = re.match(rf'w(\d+)\.json', filename)  
+    if not match:
+        continue
+    
+    width = int(match.group(1))
+    filepath = os.path.join(dir_name, filename)
+    
+    try:
+        with open(filepath, 'r') as f:
+            data = json.load(f)
         
-        # Extract width from filename (e.g., w512.json -> 512)
-        match = re.match(r'w(\d+)\.json', filename)
-        if not match:
-            print(f"Skipping {filename}: couldn't parse width")
-            continue
-        
-        width = int(match.group(1))
-        
-        try:
-            with open(filepath, 'r') as f:
-                data = json.load(f)
+        # Extract metrics for each epoch
+        for epoch in epochs:
+            train_key = f'epoch{epoch}_train_loss'
+            val_key = f'epoch{epoch}_val_loss'
             
-            # Extract metrics for each epoch
-            for epoch in epochs:
-                train_key = f'epoch{epoch}_train_loss'
-                val_key = f'epoch{epoch}_val_loss'
-                
-                if train_key in data and val_key in data:
-                    epoch_data[epoch]['width'].append(width)
-                    epoch_data[epoch]['train_losses'].append(data[train_key])
-                    epoch_data[epoch]['val_losses'].append(data[val_key])
+            if train_key in data and val_key in data:
+                epoch_data[epoch]['width'].append(width)
+                epoch_data[epoch]['train_losses'].append(data[train_key])
+                epoch_data[epoch]['val_losses'].append(data[val_key])
                     
-        except (json.JSONDecodeError, KeyError) as e:
-            print(f"Error reading {filename}: {e}")
-            continue
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"Error reading {filename}: {e}")
+        continue
 
 # Sort data for each epoch by width
 for epoch in epochs:
@@ -104,7 +105,7 @@ plt.yscale(yscale)
 plt.tight_layout()
 
 # Save plot
-output_filename = f'train_vs_val_loss_{plot_id}_epochs_{yscale}.png'
+output_filename = f'loss_{plot_id}_N{n_value}_{yscale}.png'
 plt.savefig(output_filename, dpi=300, bbox_inches='tight')
 print(f'\nSaved to "{output_filename}"')
 plt.show()

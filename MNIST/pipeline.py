@@ -20,28 +20,27 @@ from utilities import FCNN, train, test, compute_and_save_singular_values
 parser = argparse.ArgumentParser()
 parser.add_argument('--job-idx', type=int, required=True)
 parser.add_argument('--output-dir', type=str, default='./outputs')
-parser.add_argument('--loss-fn', type=str, default='mse', choices=['ce', 'mse'],
-                    help='Loss function: ce (CrossEntropy) or mse (MSE)')
+parser.add_argument('--loss-fn', type=str, default='mse')
 args = parser.parse_args()
 
 
-hidden_dim = 10000
-
+width = args.job_idx % 20 + 11
+filename = f"w{width}_job{args.job_idx}"
 num_epochs = 1000
 samples = 4000
-batch_size = 256
+batch_size = 512
 learning_rate = 1e-3
-save_at_this_epoch = [num_epochs] #[500, 1000, num_epochs]
+save_at_this_epoch = [100*i for i in range(1, 10)]+[num_epochs] #[500, 1000, num_epochs]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_fn = nn.CrossEntropyLoss() if args.loss_fn == 'ce' else nn.MSELoss()
-model = FCNN(hidden_dim=hidden_dim).to(device)
+model = FCNN(hidden_dim=width).to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
 print(f"Training on device: {device}")
 
 num_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print(f"Running with hidden_dim = {hidden_dim}")
+print(f"Running with width = {width}")
 print(f"Running with loss function = {args.loss_fn}")
 print(f"Running with parameters = {num_parameters}")
 
@@ -53,7 +52,7 @@ print(f"Model size: {total_size / 1e6:.2f} MB "
 
 json_input = {
     'num_epochs': num_epochs,
-    'hidden_dim': hidden_dim,
+    'width': width,
     'batch_size': batch_size,
     'samples': samples,
     'num_parameters': num_parameters,
@@ -70,12 +69,11 @@ train_dataset = Subset(train_dataset_full, range(samples))
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
 test_dataset_full = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
-n_testing = min(samples//4, 10000)
-test_dataset = Subset(test_dataset_full, range(n_testing))
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+test_loader = DataLoader(test_dataset_full, batch_size=batch_size, shuffle=False)
 
 # SAVING
 os.makedirs(args.output_dir, exist_ok=True)
+os.makedirs(os.path.join(args.output_dir, 'metrics'), exist_ok=True)
 os.makedirs(os.path.join(args.output_dir, 'weights'), exist_ok=True)
 os.makedirs(os.path.join(args.output_dir, 'singular_values'), exist_ok=True)
 
@@ -92,21 +90,21 @@ for epoch in range(1, num_epochs + 1):
         json_input[f'epoch{epoch}_test_acc'] = test_acc
         
         # Save model weights
-        torch.save(model.state_dict(), f'{args.output_dir}/weights/hidden_dim{hidden_dim}_epoch{epoch}.pth')
+        torch.save(model.state_dict(), f'{args.output_dir}/weights/{filename}_e{epoch}.pth')
         print(f"Model weights saved at epoch {epoch}")
         
         # Compute and save singular values
-        S = compute_and_save_singular_values(model, train_loader, device, hidden_dim, epoch, args.output_dir)
+        S = compute_and_save_singular_values(model, train_loader, device, filename, epoch, args.output_dir)
         json_input[f'epoch{epoch}_sv_max'] = float(S[0].cpu())
         json_input[f'epoch{epoch}_sv_min'] = float(S[-1].cpu())
-       
-with open(f'{args.output_dir}/final_metrics_hidden_dim{hidden_dim}.json', 'w') as f:
+    
+
+with open(f'{args.output_dir}/metrics/{filename}.json', 'w') as f:
     json.dump(json_input, f, indent=4)
+print(f"\nConfig and Metrics saved to '{args.output_dir}/metrics/{filename}.json'")
 
-print(f"\nConfig and Metrics saved to '{args.output_dir}/final_metrics_hidden_dim{hidden_dim}.json'")
-
-torch.save(model.state_dict(), f'{args.output_dir}/weights/hidden_dim{hidden_dim}.pth')
-print(f"Model saved to '{args.output_dir}/weights/hidden_dim{hidden_dim}.pth'")
+torch.save(model.state_dict(), f'{args.output_dir}/weights/{filename}.pth')
+print(f"Model saved to '{args.output_dir}/weights/{filename}.pth'")
 
 print("\n" + "="*50)
 print("Training and singular value computation complete!")

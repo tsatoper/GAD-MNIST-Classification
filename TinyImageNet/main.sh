@@ -5,7 +5,7 @@
 #PBS -l select=1:ncpus=4:ngpus=1:mem=32GB
 #PBS -l walltime=11:59:00
 #PBS -j oe
-# qsub -J 0-4 main.sh
+# qsub -J 0-10 main.sh
 # qsub -v PBS_ARRAY_INDEX=0 main.sh
 
 module load conda  
@@ -21,7 +21,7 @@ python -u /glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/main.py \
     --job-idx $PBS_ARRAY_INDEX \
     --output-dir /glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/models/default \
     --data-dir /glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/.tinyimagenet/tiny-imagenet-200 \
-    --train-suffix train_N1 \
+    --train-suffix N3 \
     --width ${WIDTHS[$PBS_ARRAY_INDEX]}
 
 END_TIME=$(date +%s)

@@ -17,7 +17,7 @@ echo "Job started at $(date)"
 
 python -u /glade/derecho/scratch/tsatoperry/GAD/MNIST/pipeline.py \
     --job-idx $PBS_ARRAY_INDEX \
-    --output-dir /glade/derecho/scratch/tsatoperry/GAD/MNIST/models/test/$PBS_ARRAY_INDEX \
+    --output-dir /glade/derecho/scratch/tsatoperry/GAD/MNIST/models/dd \
     --loss-fn mse
 
 END_TIME=$(date +%s)

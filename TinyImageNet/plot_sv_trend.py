@@ -13,7 +13,11 @@ metrics_directory = os.path.join(output_dir, 'metrics')
 
 # Regex to match: w64_e10.pt, w128_e20.pt, etc.
 # Captures width and epoch
+training_dir = 'N3'
+
 pattern = re.compile(rf"w(\d+)_e(\d+)\.pt$")
+pattern = re.compile(rf"w(\d+)_{training_dir}_e(\d+)\.pt$")
+
 
 files = []
 
@@ -41,7 +45,7 @@ for width, epoch, path in files:
 width_val_losses = {}
 width_train_losses = {}
 for width in width_groups.keys():
-    metrics_file = os.path.join(metrics_directory, f'w{width}.json')
+    metrics_file = os.path.join(metrics_directory, f'w{width}_{training_dir}.json')
     if os.path.exists(metrics_file):
         with open(metrics_file, 'r') as f:
             metrics = json.load(f)
@@ -96,7 +100,7 @@ for width in valid_widths:
     ax.plot(max_idx, max_val, 'o', color=color, markersize=8, 
             markeredgecolor='black', markeredgewidth=0.5)
 
-ax.set_title(f"Singular Values Comparison by Width - {tag}")
+ax.set_title(f"Singular Values Comparison by Width - {training_dir}")
 ax.set_xlabel("Index")
 ax.set_ylabel("Singular Value")
 ax.set_xscale("log")
@@ -111,7 +115,7 @@ cbar = plt.colorbar(sm, ax=ax)
 cbar.set_label("Width")
 
 plt.tight_layout()
-output_filename = f"sv_by_width_{tag}.png"
+output_filename = f"sv_by_width_{training_dir}.png"
 plt.savefig(output_filename, dpi=150)
 print(f"Saved: {output_filename}")
 val_losses = [width_val_losses[w] for w in valid_widths]

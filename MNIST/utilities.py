@@ -79,42 +79,44 @@ def test(model, test_loader, loss_fn, device, n_classes=10):
           f'({accuracy:.2f}%)\n')
     return test_loss, accuracy
 
+    
+def compute_and_save_singular_values(model, data_loader, device, filename, epoch, output_dir):
+    # Compute and save singular values of hidden layer activations (penultimate features).
 
-def compute_and_save_singular_values(model, test_loader, device, hidden_dim, epoch, output_dir):
-    """Compute and save singular values of hidden layer activations."""
     print("\n" + "="*50)
     print(f"Computing singular values at epoch {epoch}...")
     print("="*50)
     
     model.eval()
-    all_hidden = []
-    
-    count = 0
-    total_batches = len(test_loader)
+    all_feats = []
+
     with torch.no_grad():
-        for data, target in test_loader:
-            data, target = data.to(device), target.to(device)
-            _, hidden = model(data, return_hidden=True)
-            all_hidden.append(hidden)
-            count += 1
-            if count % 10 == 0 or count == total_batches:
-                print(f'Batch {count}/{total_batches}')
-    
-    all_hidden = torch.cat(all_hidden, dim=0)
-    print(f"Hidden activations shape: {all_hidden.shape}")
-    
-    U, S, Vh = torch.linalg.svd(all_hidden, full_matrices=False)
-    print(f"\nTop 10 singular values: {S[:10].cpu().numpy()}")
-    
+        for batch_idx, (data, _) in enumerate(data_loader, 1):
+            data = data.to(device)
+            _, feats = model(data, return_hidden=True)  # directly get features
+            all_feats.append(feats.cpu())
+
+            if batch_idx % 10 == 0 or batch_idx == len(data_loader):
+                print(f'Processed batch {batch_idx}/{len(data_loader)}')
+
+    # Concatenate features
+    Phi = torch.cat(all_feats, dim=0)
+    print(f"Collected hidden activations shape: {Phi.shape}")
+
+    # Center and normalize
+    Phi = Phi - Phi.mean(dim=0, keepdim=True)
+    Phi = Phi / Phi.shape[0]**0.5
+
+    # Compute SVD
+    U, S, Vh = torch.linalg.svd(Phi, full_matrices=False)
+
+    # Print summary
+    print(f"\nSingular values: {S[:5].numpy()}...{S[-5:].numpy()}")
+        
     # Save singular values
-    sv_path = os.path.join(output_dir, 'singular_values', f'hidden_dim{hidden_dim}_epoch{epoch}.pt')
+    sv_path = os.path.join(output_dir, 'singular_values', f'{filename}_e{epoch}.pt')
 
     torch.save(S.cpu(), sv_path)
     print(f"Singular values saved to {sv_path}")
     
     return S
-
-
-if __name__=="__main__":
-    model = FCNN(hidden_dim=1)
-    

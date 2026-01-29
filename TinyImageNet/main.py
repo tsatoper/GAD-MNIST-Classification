@@ -18,14 +18,15 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--job-idx', type=int, required=True)
 parser.add_argument('--output-dir', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/models/default')
 parser.add_argument('--data-dir', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/tinyimagenet/tiny-imagenet-200')
-parser.add_argument('--train-suffix', type=str, default='train_N1')
+parser.add_argument('--train-suffix', type=str, default='N1')
 parser.add_argument('--width', type=int, default=64, help='Width of the CNN')
 args = parser.parse_args()
 
+model_name = f'w{args.width}_{args.train_suffix}'
 
 # Configuration
 num_epochs = 1000
-batch_size = 16
+batch_size = 256
 learning_rate = 1e-4
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -42,7 +43,7 @@ print(f"Model parameters: {num_parameters:,} ({num_parameters/1e6:.2f}M)")
 # -----------------------------
 # Data loading
 # -----------------------------
-traindir = os.path.join(args.data_dir, args.train_suffix)
+traindir = os.path.join(args.data_dir, f'train_{args.train_suffix}')
 valdir = os.path.join(args.data_dir, 'val')
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -152,14 +153,13 @@ for epoch in range(1, num_epochs + 1):
         json_input[f'epoch{epoch}_val_acc'] = val_acc
 
         # Save weights
-        torch.save(model.state_dict(), f'{args.output_dir}/weights/w{args.width}_epoch{epoch}.pth')
+        torch.save(model.state_dict(), f'{args.output_dir}/weights/{model_name}_e{epoch}.pth')
 
         # Compute and save singular values
-        model_name = f'w{args.width}'
         S = compute_and_save_singular_values(model, train_loader, device, model_name, epoch, args.output_dir)
 
 # Save metrics
-with open(f'{args.output_dir}/metrics/w{args.width}.json', 'w') as f:
+with open(f'{args.output_dir}/metrics/w{args.width}_{args.train_suffix}.json', 'w') as f:
     json.dump(json_input, f, indent=4)
 
-print(f"\nMetrics saved to '{args.output_dir}/metrics/w{args.width}.json'")
+print(f"\nMetrics saved to '{args.output_dir}/metrics/{model_name}.json'")

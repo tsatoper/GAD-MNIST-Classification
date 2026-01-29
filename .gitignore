@@ -5,3 +5,4 @@ dump/
 *output*
 .tinyimagenet
 data/
+training_data/
