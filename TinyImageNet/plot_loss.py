@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 
-plot_id = 'default'
+plot_id = 'lr1e-3'
 dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/models/{plot_id}/metrics'
 
 n_value = 3  # Specify which N value to match
 # Define epochs to plot
-epochs = [100, 1000]
+epochs = [50]
 
 # Dictionary to store data for each epoch
 epoch_data = {epoch: {'width': [], 'train_losses': [], 'val_losses': []} 

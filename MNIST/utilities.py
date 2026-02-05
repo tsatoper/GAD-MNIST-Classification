@@ -19,7 +19,7 @@ class FCNN(nn.Module):
 
         return self.fc2(hidden)
 
-def train(model, train_loader, loss_fn, optimizer, device, epoch, n_classes=10):
+def train(model, train_loader, loss_fn, optimizer, scheduler, device, epoch, n_classes=10):
     model.train()
     total_loss = 0
     correct = 0
@@ -31,15 +31,13 @@ def train(model, train_loader, loss_fn, optimizer, device, epoch, n_classes=10):
         optimizer.zero_grad()
         output = model(data)
         
-        if isinstance(loss_fn, nn.MSELoss):
-            target_one_hot = torch.zeros(target.size(0), n_classes, device=device)
-            target_one_hot.scatter_(1, target.unsqueeze(1), 1)
-            loss = loss_fn(output, target_one_hot)
-        else:
-            loss = loss_fn(output, target)
+        target_one_hot = torch.zeros(target.size(0), n_classes, device=device)
+        target_one_hot.scatter_(1, target.unsqueeze(1), 1)
+        loss = loss_fn(output, target_one_hot)
 
         loss.backward()
         optimizer.step()
+        scheduler.step()
 
         total_loss += loss.item()
         pred = output.argmax(dim=1, keepdim=True)
@@ -62,13 +60,9 @@ def test(model, test_loader, loss_fn, device, n_classes=10):
             
             output = model(data)
             
-            if isinstance(loss_fn, nn.MSELoss):
-                # Convert target to one-hot encoding for MSE loss
-                target_one_hot = torch.zeros(target.size(0), n_classes, device=device)
-                target_one_hot.scatter_(1, target.unsqueeze(1), 1)
-                test_loss += loss_fn(output, target_one_hot).item()
-            else:
-                test_loss += loss_fn(output, target).item()
+            target_one_hot = torch.zeros(target.size(0), n_classes, device=device)
+            target_one_hot.scatter_(1, target.unsqueeze(1), 1)
+            test_loss += loss_fn(output, target_one_hot).item()
                 
             pred = output.argmax(dim=1, keepdim=True)
             correct += pred.eq(target.view_as(pred)).sum().item()
@@ -99,24 +93,15 @@ def compute_and_save_singular_values(model, data_loader, device, filename, epoch
             if batch_idx % 10 == 0 or batch_idx == len(data_loader):
                 print(f'Processed batch {batch_idx}/{len(data_loader)}')
 
-    # Concatenate features
     Phi = torch.cat(all_feats, dim=0)
     print(f"Collected hidden activations shape: {Phi.shape}")
 
-    # Center and normalize
-    Phi = Phi - Phi.mean(dim=0, keepdim=True)
-    Phi = Phi / Phi.shape[0]**0.5
-
-    # Compute SVD
     U, S, Vh = torch.linalg.svd(Phi, full_matrices=False)
-
-    # Print summary
     print(f"\nSingular values: {S[:5].numpy()}...{S[-5:].numpy()}")
         
-    # Save singular values
     sv_path = os.path.join(output_dir, 'singular_values', f'{filename}_e{epoch}.pt')
 
     torch.save(S.cpu(), sv_path)
     print(f"Singular values saved to {sv_path}")
     
-    return S
+    return S, sv_path

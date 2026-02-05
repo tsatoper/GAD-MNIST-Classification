@@ -6,7 +6,7 @@ import numpy as np
 import json
 
 # Configuration
-tag = 'default'  
+tag = 'lr1e-4'  
 output_dir = '/glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/models/' + tag
 sv_directory = os.path.join(output_dir, 'singular_values')
 metrics_directory = os.path.join(output_dir, 'metrics')
@@ -66,7 +66,7 @@ for width in width_groups.keys():
 
 # Filter out widths without validation loss data
 valid_widths = [w for w in width_groups.keys() if width_val_losses.get(w) is not None]
-
+valid_widths = [w for w in width_groups.keys() ]
 if not valid_widths:
     print("Error: No validation loss data found!")
     exit(1)
@@ -84,15 +84,15 @@ for width in valid_widths:
     # Get the last epoch's singular values
     final_epoch, final_sv = epochs_and_svs[-1]
     
-    val_loss = width_val_losses[width]
-    train_loss = width_train_losses[width]
+    # val_loss = width_val_losses[width]
+    # train_loss = width_train_losses[width]
     color = cmap(norm(width))  # Color by width, not val_loss
     indices = np.arange(1, len(final_sv) + 1)
     
     # Create label with both train and validation loss
-    label = f"w={width} (train={train_loss:.2f}, val={val_loss:.2f})"
+    # label = f"w={width} (train={train_loss:.2f}, val={val_loss:.2f})"
     
-    ax.plot(indices, final_sv, color=color, label=label, alpha=0.7, linewidth=2)
+    ax.plot(indices, final_sv, color=color, alpha=0.7, linewidth=2)
     
     # Plot a dot at the last point
     max_idx = len(final_sv)

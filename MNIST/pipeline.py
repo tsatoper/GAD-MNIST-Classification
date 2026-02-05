@@ -18,30 +18,39 @@ from torch.utils.data import Subset
 from utilities import FCNN, train, test, compute_and_save_singular_values
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--job-idx', type=int, required=True)
-parser.add_argument('--output-dir', type=str, default='./outputs')
-parser.add_argument('--loss-fn', type=str, default='mse')
+parser.add_argument('--array-idx', type=int, default=0)
+parser.add_argument('--job-num', type=str, default='__nojob__')
+parser.add_argument('--output-dir', type=str, default='./default')
+parser.add_argument('--learning-rate', type=float, default=1e-3)
 args = parser.parse_args()
 
 
-width = args.job_idx % 20 + 11
-filename = f"w{width}_job{args.job_idx}"
-num_epochs = 1000
+width = 2**(args.array_idx % 7 + 7) #args.array_idx % 30 + 1 #128 = 2^7 2^13
+filename = f"w{width}_job{args.job_num[:7]}"
+num_epochs = 500
+save_at_this_epoch = [1, 100, 500]
 samples = 4000
-batch_size = 512
-learning_rate = 1e-3
-save_at_this_epoch = [100*i for i in range(1, 10)]+[num_epochs] #[500, 1000, num_epochs]
 
+
+batch_size = 1024
+learning_rate = args.learning_rate
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-loss_fn = nn.CrossEntropyLoss() if args.loss_fn == 'ce' else nn.MSELoss()
+loss_fn = nn.MSELoss()
+
 model = FCNN(hidden_dim=width).to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.975)
 
+print(f"Running with width = {width}")
+print(f"Running with {samples} training samples")
+print(f"Running with batch size = {batch_size}")
+print(f"Running with learning rate = {learning_rate}")
+print(f"Saving SV and validating at epochs: {save_at_this_epoch}")
 print(f"Training on device: {device}")
+print(f"Running with loss function = {loss_fn}")
+
 
 num_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print(f"Running with width = {width}")
-print(f"Running with loss function = {args.loss_fn}")
 print(f"Running with parameters = {num_parameters}")
 
 param_size = sum(p.numel() * p.element_size() for p in model.parameters())
@@ -56,7 +65,7 @@ json_input = {
     'batch_size': batch_size,
     'samples': samples,
     'num_parameters': num_parameters,
-    'loss_function': args.loss_fn,
+    'loss_function': str(loss_fn),
     'learning_rate': learning_rate
 }
 
@@ -80,10 +89,11 @@ os.makedirs(os.path.join(args.output_dir, 'singular_values'), exist_ok=True)
 
 # TRAINING
 for epoch in range(1, num_epochs + 1):
-    train_loss, train_acc = train(model, train_loader, loss_fn, optimizer, device, epoch)
-    
+    train_loss, train_acc = train(model, train_loader, loss_fn, optimizer, scheduler, device, epoch)
+
     if epoch in save_at_this_epoch:
         test_loss, test_acc = test(model, test_loader, loss_fn, device)
+
         json_input[f'epoch{epoch}_train_loss'] = train_loss
         json_input[f'epoch{epoch}_test_loss'] = test_loss
         json_input[f'epoch{epoch}_train_acc'] = train_acc
@@ -91,20 +101,20 @@ for epoch in range(1, num_epochs + 1):
         
         # Save model weights
         torch.save(model.state_dict(), f'{args.output_dir}/weights/{filename}_e{epoch}.pth')
-        print(f"Model weights saved at epoch {epoch}")
+        print(f"Model weights saved at epoch {epoch} to {args.output_dir}/weights/{filename}_e{epoch}.pth")
         
         # Compute and save singular values
-        S = compute_and_save_singular_values(model, train_loader, device, filename, epoch, args.output_dir)
+        S, sv_path = compute_and_save_singular_values(model, train_loader, device, filename, epoch, args.output_dir)
+        print(f"Singular Values saved at epoch {epoch} to {sv_path}")
+
         json_input[f'epoch{epoch}_sv_max'] = float(S[0].cpu())
         json_input[f'epoch{epoch}_sv_min'] = float(S[-1].cpu())
+        json_input[f'epoch{epoch}_sv_path'] = sv_path
     
 
 with open(f'{args.output_dir}/metrics/{filename}.json', 'w') as f:
     json.dump(json_input, f, indent=4)
 print(f"\nConfig and Metrics saved to '{args.output_dir}/metrics/{filename}.json'")
-
-torch.save(model.state_dict(), f'{args.output_dir}/weights/{filename}.pth')
-print(f"Model saved to '{args.output_dir}/weights/{filename}.pth'")
 
 print("\n" + "="*50)
 print("Training and singular value computation complete!")

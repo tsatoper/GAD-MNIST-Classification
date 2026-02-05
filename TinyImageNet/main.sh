@@ -12,17 +12,19 @@ module load conda
 conda activate py2d_env
 
 # Array of widths to test
-WIDTHS=(1 2 4 8 16 32 64 128 256 512 1024 2048 4096 8192)
+WIDTHS=(1 2 4 8 16 32 64 128 256 512 1024 ) #2048 4096 8192)
 
 START_TIME=$(date +%s)
 echo "Job started at $(date)"
 
 python -u /glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/main.py \
     --job-idx $PBS_ARRAY_INDEX \
-    --output-dir /glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/models/default \
+    --output-dir /glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/models/lr1e-4 \
     --data-dir /glade/derecho/scratch/tsatoperry/GAD/TinyImageNet/.tinyimagenet/tiny-imagenet-200 \
     --train-suffix N3 \
-    --width ${WIDTHS[$PBS_ARRAY_INDEX]}
+    --width ${WIDTHS[$PBS_ARRAY_INDEX]} \
+    --learning-rate 1e-4
+
 
 END_TIME=$(date +%s)
 echo "Job ended at $(date)"

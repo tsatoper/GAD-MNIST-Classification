@@ -4,22 +4,18 @@ import torch.nn.functional as F
 import os
 
 class MLP_AR(nn.Module):
-    def __init__(self, input_dim=1024, hidden1_dim=512, hidden2_dim=512, output_dim=1024):
+    def __init__(self, input_dim=1024, hidden_dim=1024, output_dim=1024):
         super().__init__()
-        self.fc1 = nn.Linear(input_dim, hidden1_dim)
-
-        self.fc2 = nn.Linear(hidden1_dim, hidden2_dim)
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, output_dim)
         
-        self.fc3 = nn.Linear(hidden2_dim, output_dim)
-
 
     def forward(self, x, return_features=False):
         h1 = F.relu(self.fc1(x))
-        h2 = F.relu(self.fc2(h1))
-        out = self.fc3(h2)
+        out = self.fc2(h1)
 
         if return_features:
-            return out, h2  # return last hidden layer activations
+            return out, h1  # return last hidden layer activations
         return out
 
 
@@ -46,10 +42,6 @@ def compute_and_save_singular_values(model, data_loader, device, model_name, epo
     Phi = torch.cat(all_feats, dim=0)
     print(f"Collected hidden activations shape: {Phi.shape}")
 
-    # Center and normalize
-    Phi = Phi - Phi.mean(dim=0, keepdim=True)
-    Phi = Phi / Phi.shape[0]**0.5
-
     # Compute SVD
     U, S, Vh = torch.linalg.svd(Phi, full_matrices=False)
 
@@ -63,7 +55,7 @@ def compute_and_save_singular_values(model, data_loader, device, model_name, epo
     torch.save(S, sv_path)
     print(f"Singular values saved to {sv_path}")
 
-    return S
+    return S, sv_path
 
 
 import numpy as np
@@ -96,10 +88,6 @@ def load_ks_data(train_data_path, val_data_path, batch_size=256, num_workers=4):
     print(f"Loading validation data from {val_data_path}...")
     val_data = np.load(val_data_path)  # Shape: (1024, 50000)
     print(f"Validation data shape: {val_data.shape}")
-
-    # Transpose to (time, spatial)
-    train_data = train_data.T  # (200000, 1024)
-    val_data = val_data.T      # (50000, 1024)
 
     # Create autoregressive dataset: X_t -> X_{t+1}
     X_train = train_data[:-1]  # Input: all timesteps except last

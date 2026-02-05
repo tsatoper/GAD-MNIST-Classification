@@ -1,9 +1,9 @@
 #!/bin/bash
 #PBS -A UCSC0009
-#PBS -N output
+#PBS -N o_mnist
 #PBS -q main           
 #PBS -l select=1:ncpus=1:ngpus=1:mem=5GB
-#PBS -l walltime=11:59:00
+#PBS -l walltime=00:15:00
 #PBS -j oe
 # qsub -J 0-20 pipeline.sh
 # qsub -v PBS_ARRAY_INDEX=0 pipeline.sh
@@ -16,9 +16,11 @@ START_TIME=$(date +%s)
 echo "Job started at $(date)"
 
 python -u /glade/derecho/scratch/tsatoperry/GAD/MNIST/pipeline.py \
-    --job-idx $PBS_ARRAY_INDEX \
-    --output-dir /glade/derecho/scratch/tsatoperry/GAD/MNIST/models/dd \
-    --loss-fn mse
+    --array-idx $PBS_ARRAY_INDEX \
+    --job-num $PBS_JOBID \
+    --output-dir /glade/derecho/scratch/tsatoperry/GAD/MNIST/models/testing \
+    --learning-rate 1e-3
+
 
 END_TIME=$(date +%s)
 echo "Job ended at $(date)"
