@@ -3,11 +3,11 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-plot_id = 'lr1e-4' 
+plot_id = '-4' 
 
 dir_name = f'./models/{plot_id}/metrics'
 # Define epochs to plot
-epochs = [5, 50, 51, 55, 100]
+epochs = [100, 500]
 yscale = 'linear'
 save_path = f'loss_{plot_id}_{yscale}.png'
 

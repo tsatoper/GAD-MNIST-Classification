@@ -1,0 +1,14 @@
+Job started at Fri Feb  6 04:17:50 PM MST 2026
+Job index: 14
+Hidden dim: 
+usage: pipeline.py [-h] --job-idx JOB_IDX [--model MODEL]
+                   [--output-dir OUTPUT_DIR]
+                   [--train-data-path TRAIN_DATA_PATH]
+                   [--val-data-path VAL_DATA_PATH] [--hidden-dim HIDDEN_DIM]
+                   [--epochs EPOCHS]
+pipeline.py: error: argument --hidden-dim: expected one argument
+Job ended at Fri Feb  6 04:17:53 PM MST 2026
+==================================================
+Total runtime: 0h 0m 3s
+Hidden dimension: 
+==================================================

@@ -37,13 +37,13 @@ def train(model, train_loader, loss_fn, optimizer, scheduler, device, epoch, n_c
 
         loss.backward()
         optimizer.step()
-        scheduler.step()
 
         total_loss += loss.item()
         pred = output.argmax(dim=1, keepdim=True)
         correct += pred.eq(target.view_as(pred)).sum().item()
         total += target.size(0)
-    
+    scheduler.step()
+
     avg_loss = total_loss / len(train_loader)
     accuracy = 100. * correct / total
     print(f'Train Epoch {epoch}: Avg Loss: {avg_loss:.4f}, Accuracy: {correct}/{total} ({accuracy:.2f}%)')

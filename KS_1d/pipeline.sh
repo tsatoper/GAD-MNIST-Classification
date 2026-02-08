@@ -5,8 +5,8 @@
 #PBS -l select=1:ncpus=4:ngpus=1:mem=32GB
 #PBS -l walltime=11:59:00
 #PBS -j oe
-# qsub -J 0-6 main.sh
-# qsub -v PBS_ARRAY_INDEX=0 main.sh
+# qsub -J 10-14 pipeline.sh
+# qsub -v PBS_ARRAY_INDEX=10 pipeline.sh 
 
 module load conda  
 conda activate py2d_env
@@ -22,13 +22,16 @@ echo "Job started at $(date)"
 echo "Job index: $PBS_ARRAY_INDEX"
 echo "Hidden dim: $HIDDEN_DIM"
 
+#AR_MLP_deep
+#AR_MLP_one_layer
 python -u /glade/derecho/scratch/tsatoperry/GAD/KS_1d/pipeline.py \
     --job-idx $PBS_ARRAY_INDEX \
-    --output-dir /glade/derecho/scratch/tsatoperry/GAD/KS_1d/models/default \
+    --model AR_MLP_deep \
+    --output-dir long \
     --train-data-path /glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/train_KS_1024.npy \
     --val-data-path /glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/val_KS_1024.npy \
-    --hidden-dim $HIDDEN_DIM
-
+    --hidden-dim $HIDDEN_DIM \
+    --epochs 100
 END_TIME=$(date +%s)
 echo "Job ended at $(date)"
 

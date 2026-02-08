@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 
-plot_id = 'default'
-dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/KS_1d/models/{plot_id}/metrics/'
-yscale = 'log'
-epochs = [100, 200, 300]
+plot_id = 'long'
+dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/KS_1d/deep/{plot_id}/metrics/'
+yscale = 'linear'
+epochs = [100]
 
 
 # Dictionary to store data for each epoch
@@ -22,12 +22,13 @@ if not os.path.exists(dir_name):
 for filename in os.listdir(dir_name):
     # Match pattern: w{width}_ttrain_N{number}.json
     # Example: w2_ttrain_N2.json
-    match = re.match(rf'h1(\d+)\_h2(\d+)\.json', filename)  
+    match = re.match(rf'h_(\d+)\_job(\d+)\.json', filename)  
 
     width = int(match.group(1))
     filepath = os.path.join(dir_name, filename)
     
     try:
+
         with open(filepath, 'r') as f:
             data = json.load(f)
         

@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import os
 
-class MLP_AR(nn.Module):
+class AR_MLP_one_layer(nn.Module):
     def __init__(self, input_dim=1024, hidden_dim=1024, output_dim=1024):
         super().__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
@@ -11,13 +11,34 @@ class MLP_AR(nn.Module):
         
 
     def forward(self, x, return_features=False):
-        h1 = F.relu(self.fc1(x))
-        out = self.fc2(h1)
+        features = F.relu(self.fc1(x))
+        out = self.fc2(features)
 
         if return_features:
-            return out, h1  # return last hidden layer activations
+            return out, features  # return last hidden layer activations
         return out
 
+class AR_MLP_deep(nn.Module):
+    def __init__(self, input_dim=1024, hidden_dim=1024, output_dim=1024):
+        super().__init__()
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, hidden_dim)
+        self.fc3 = nn.Linear(hidden_dim, hidden_dim)
+        self.fc4 = nn.Linear(hidden_dim, hidden_dim)
+        self.fc5 = nn.Linear(hidden_dim, hidden_dim)
+        self.fc6 = nn.Linear(hidden_dim, output_dim)
+
+    def forward(self, x, return_features=False):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = F.relu(self.fc4(x))
+        features = F.relu(self.fc5(x))
+        out = self.fc6(features) 
+
+        if return_features:
+            return out, features  # return last hidden layer activations
+        return out
 
 def compute_and_save_singular_values(model, data_loader, device, model_name, epoch, output_dir):
     # Compute and save singular values of hidden layer activations (penultimate features).
@@ -82,11 +103,11 @@ def load_ks_data(train_data_path, val_data_path, batch_size=256, num_workers=4):
     """
     # Load data
     print(f"Loading training data from {train_data_path}...")
-    train_data = np.load(train_data_path)  # Shape: (1024, 200000)
+    train_data = np.load(train_data_path) 
     print(f"Training data shape: {train_data.shape}")
 
     print(f"Loading validation data from {val_data_path}...")
-    val_data = np.load(val_data_path)  # Shape: (1024, 50000)
+    val_data = np.load(val_data_path) 
     print(f"Validation data shape: {val_data.shape}")
 
     # Create autoregressive dataset: X_t -> X_{t+1}
@@ -128,3 +149,4 @@ def load_ks_data(train_data_path, val_data_path, batch_size=256, num_workers=4):
     n_val = X_val.shape[0]
 
     return train_loader, val_loader, input_dim, n_train, n_val
+    

@@ -3,120 +3,72 @@ import re
 import torch
 import matplotlib.pyplot as plt
 import numpy as np
-import json
 
-# Configuration
-tag = 'default'  
-output_dir = '/glade/derecho/scratch/tsatoperry/GAD/KS_1d/models/' + tag
-sv_directory = os.path.join(output_dir, 'singular_values')
-metrics_directory = os.path.join(output_dir, 'metrics')
+model_dir = 'long'
+epoch = 100
+directory = f"/glade/derecho/scratch/tsatoperry/GAD/KS_1d/deep/{model_dir}/singular_values"
 
-# Regex to match: w64_e10.pt, w128_e20.pt, etc.
-# Captures width and epoch
+filename = f'sv_trend_{model_dir}.png'
 
-pattern = re.compile(rf"h1(\d+)_h2(\d+)\_e(\d+)\.pt$")
+# Regex to catch both hidden_dim1024_sv.pt AND hidden_dim4096.pt
 
+pattern = re.compile(rf"h_(\d+)\_job(\d+)_e{epoch}.pt")
 
 files = []
-
 # Collect all matching files
-for fname in os.listdir(sv_directory):
+for fname in os.listdir(directory):
     m = pattern.match(fname)
     if m:
         width = int(m.group(1))
-        files.append((width, os.path.join(sv_directory, fname)))
 
-# Sort by width, then by epoch
-files.sort(key=lambda x: (x[0], x[1]))
+        files.append((width, os.path.join(directory, fname)))
 
-# Group by width
-from collections import defaultdict
-width_groups = defaultdict(list)
+# Sort by hidden_dim numerically
+files.sort(key=lambda x: x[0])
 
-for width, path in files:
+# Load all singular value arrays
+sv_arrays = []
+width = []
+
+for hd, path in files:
     t = torch.load(path, map_location="cpu", weights_only=True)
     sv = t.numpy()
-    width_groups[width].append((sv))
+    sv[sv<1e-16] = 1e-16
+    sv_arrays.append(sv)
+    width.append(hd)
 
-# Load validation and train losses from metrics files
-width_val_losses = {}
-width_train_losses = {}
-for width in width_groups.keys():
-    metrics_file = os.path.join(metrics_directory, f'h1{width}_h2{width}.json')
-    if os.path.exists(metrics_file):
-        with open(metrics_file, 'r') as f:
-            metrics = json.load(f)
-            # Get epoch 100 validation and train loss (or whatever epoch you want)
-            val_loss_key = 'epoch100_val_loss'
-            train_loss_key = 'epoch100_train_loss'
-            if val_loss_key in metrics and train_loss_key in metrics:
-                width_val_losses[width] = metrics[val_loss_key]
-                width_train_losses[width] = metrics[train_loss_key]
-            else:
-                print(f"Warning: Loss keys not found in {metrics_file}")
-                width_val_losses[width] = None
-                width_train_losses[width] = None
-    else:
-        print(f"Warning: Metrics file not found for width {width}: {metrics_file}")
-        width_val_losses[width] = None
-        width_train_losses[width] = None
-
-# Filter out widths without validation loss data
-valid_widths = [w for w in width_groups.keys() if width_val_losses.get(w) is not None]
-
-if not valid_widths:
-    print("Error: No validation loss data found!")
-    exit(1)
-
-# ----- Plot: One line per width, colored by width -----
+# ----- Plotting all on same plot with log-normalized color gradient -----
 fig, ax = plt.subplots(figsize=(10, 6))
 
-# Create color gradient based on width (yellow for high, dark blue for low)
-cmap = plt.cm.viridis  # Reversed Yellow-Green-Blue: yellow for high, dark blue for low
-norm = plt.Normalize(vmin=min(valid_widths), vmax=max(valid_widths))
+# Create color gradient with log normalization
+cmap = plt.cm.viridis
+norm = plt.Normalize(vmin=min(width), vmax=max(width))
 
-for width in valid_widths:
-    svs = sorted(width_groups[width], key=lambda x: x[0])
+for sv, w in zip(sv_arrays, width):
+    color = cmap(norm(w))
+    indices = np.arange(1, len(sv) + 1)  # Start from 1 for log scale
+    ax.plot(indices, sv, color=color, label=f"width={w}", alpha=0.7)
     
-    # Get the last epoch's singular values
-    final_sv = svs[-1]
-    
-    val_loss = width_val_losses[width]
-    train_loss = width_train_losses[width]
-    color = cmap(norm(width))  # Color by width, not val_loss
-    indices = np.arange(1, len(final_sv) + 1)
-    
-    # Create label with both train and validation loss
-    label = f"w={width} (train={train_loss:.2f}, val={val_loss:.2f})"
-    
-    ax.plot(indices, final_sv, color=color, label=label, alpha=0.7, linewidth=2)
-    
-    # Plot a dot at the last point
-    max_idx = len(final_sv)
-    max_val = final_sv[-1]
-    ax.plot(max_idx, max_val, 'o', color=color, markersize=8, 
-            markeredgecolor='black', markeredgewidth=0.5)
+    # Plot a dot at the max index (last point)
+    max_idx = len(sv)
+    max_val = sv[-1]
+    ax.plot(max_idx, max_val, 'o', color=color, markersize=8, markeredgecolor='black', markeredgewidth=0.5)
 
-ax.set_title(f"Singular Values Comparison by Width")
+ax.set_title("Singular Values Comparison")
 ax.set_xlabel("Index")
-ax.set_ylabel("Singular Value")
-ax.set_xscale("log")
+ax.set_ylabel("Value")
+ax.set_xscale("linear")
 ax.set_yscale("log")
 ax.grid(True, alpha=0.3, which="both")
-ax.legend(loc='best', fontsize=8)
 
-# Add colorbar showing width
+# Add colorbar with log scale to show width gradient
 sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
 sm.set_array([])
 cbar = plt.colorbar(sm, ax=ax)
-cbar.set_label("Width")
+cbar.set_label("Model Width")
 
 plt.tight_layout()
-output_filename = f"sv_by_widtha.png"
-plt.savefig(output_filename, dpi=150)
-print(f"Saved: {output_filename}")
-val_losses = [width_val_losses[w] for w in valid_widths]
-print(f"Width range: {min(valid_widths)} to {max(valid_widths)}")
-print(f"Validation loss range: {min(val_losses):.4f} to {max(val_losses):.4f}")
+plt.savefig(filename, dpi=150)
+print(filename)
 
 plt.show()

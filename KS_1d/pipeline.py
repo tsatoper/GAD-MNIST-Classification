@@ -5,21 +5,23 @@ import json
 import torch
 import torch.nn as nn
 
-from utilities import MLP_AR, compute_and_save_singular_values, load_ks_data
+from utilities import AR_MLP_one_layer, AR_MLP_deep, compute_and_save_singular_values, load_ks_data
 
 # Argument parsing
 parser = argparse.ArgumentParser()
 parser.add_argument('--job-idx', type=int, required=True)
-parser.add_argument('--output-dir', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/KS_1d/models/default')
+parser.add_argument('--model', type=str, default='AR_MLP_one_layer')
+parser.add_argument('--output-dir', type=str, default='default')
 parser.add_argument('--train-data-path', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/train_KS_1024.npy')
 parser.add_argument('--val-data-path', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/val_KS_1024.npy')
 parser.add_argument('--hidden-dim', type=int, default=5000, help='Hidden layer dimension')
+parser.add_argument('--epochs', type=int, default=100, help='Epoch number to load weights from')
 args = parser.parse_args()
-
+args.output_dir = os.path.join('/glade/derecho/scratch/tsatoperry/GAD/KS_1d', args.model[7:], args.output_dir)
 model_name = f'h_{args.hidden_dim}_job{args.job_idx}'
 
 # Configuration
-num_epochs = 100
+num_epochs = args.epochs
 batch_size = 1024
 learning_rate = 1e-4
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -32,13 +34,16 @@ train_loader, val_loader, input_dim, n_train, n_val = load_ks_data(
     num_workers=4
 )
 
-output_dim = input_dim  # 1024
+model = AR_MLP_one_layer(hidden_dim=args.hidden_dim,).to(device)
+if args.model=='AR-MLP_one_layer':
+    model = AR_MLP_one_layer(hidden_dim=args.hidden_dim,).to(device)
+    print(f"Running with model = {args.model}")
+if args.model=='AR_MLP_deep':
+    model = AR_MLP_deep(hidden_dim=args.hidden_dim,).to(device)
+    print(f"Running with model = {args.model}")
 
-model = MLP_AR(
-    input_dim=input_dim,
-    hidden_dim=args.hidden_dim,
-    output_dim=output_dim
-).to(device)
+
+dt = 1e-3
 
 loss_fn = nn.MSELoss()
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
@@ -69,7 +74,6 @@ json_input = {
     'num_epochs': num_epochs,
     'hidden_dim': args.hidden_dim,
     'input_dim': input_dim,
-    'output_dim': output_dim,
     'batch_size': batch_size,
     'num_parameters': num_parameters,
     'loss_function': str(loss_fn),
@@ -88,7 +92,7 @@ for epoch in range(1, num_epochs + 1):
         
         optimizer.zero_grad()
         output = model(data)
-        loss = loss_fn(output, target)
+        loss = loss_fn(data+output*dt, target)
         
         loss.backward()
         optimizer.step()
@@ -97,14 +101,14 @@ for epoch in range(1, num_epochs + 1):
     
     train_loss /= len(train_loader)
 
-    print(f'Epoch {epoch}/{num_epochs} - Train Loss: {train_loss:.6f}')
+    print(f'Epoch {epoch}/{num_epochs} - Train Loss: {train_loss:.6g}')
     json_input[f'epoch{epoch}_train_loss'] = train_loss
 
     # Step the learning rate scheduler
     scheduler.step()
 
     # Validate and compute singular values every 100 epochs
-    if epoch % 100 == 0:
+    if epoch % 10 == 0 or epoch == num_epochs:
         model.eval()
         val_loss = 0.0
 
@@ -112,12 +116,12 @@ for epoch in range(1, num_epochs + 1):
             for data, target in val_loader:
                 data, target = data.to(device), target.to(device)
                 output = model(data)
-                loss = loss_fn(output, target)
+                loss = loss_fn(data+output*dt, target)
                 
                 val_loss += loss.item()
         
         val_loss /= len(val_loader)
-        print(f'  Val Loss: {val_loss:.6f}')
+        print(f'  Val Loss: {val_loss:.6g}')
 
         json_input[f'epoch{epoch}_val_loss'] = val_loss
 
