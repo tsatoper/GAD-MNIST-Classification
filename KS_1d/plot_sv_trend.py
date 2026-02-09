@@ -4,9 +4,9 @@ import torch
 import matplotlib.pyplot as plt
 import numpy as np
 
-model_dir = 'long'
+model_dir = 'gobig'
 epoch = 100
-directory = f"/glade/derecho/scratch/tsatoperry/GAD/KS_1d/deep/{model_dir}/singular_values"
+directory = f"/glade/derecho/scratch/tsatoperry/GAD/KS_1d/AR_MLP_deep/{model_dir}/singular_values"
 
 filename = f'sv_trend_{model_dir}.png'
 
@@ -46,15 +46,28 @@ norm = plt.Normalize(vmin=min(width), vmax=max(width))
 
 for sv, w in zip(sv_arrays, width):
     color = cmap(norm(w))
-    indices = np.arange(1, len(sv) + 1)  # Start from 1 for log scale
-    ax.plot(indices, sv, color=color, label=f"width={w}", alpha=0.7)
-    
-    # Plot a dot at the max index (last point)
-    max_idx = len(sv)
-    max_val = sv[-1]
-    ax.plot(max_idx, max_val, 'o', color=color, markersize=8, markeredgecolor='black', markeredgewidth=0.5)
+    indices = np.arange(1, len(sv) + 1)
 
-ax.set_title("Singular Values Comparison")
+    # main spectrum
+    ax.plot(indices, sv, color=color, alpha=0.7)
+
+    # endpoint marker
+    ax.plot(len(sv), sv[-1], 'o',
+            color=color, markersize=8,
+            markeredgecolor='black', markeredgewidth=0.5)
+
+    # ---- MEAN LINE ----
+    ax.hlines(
+        y=sv.mean(),
+        xmin=indices[0],
+        xmax=indices[-1],
+        colors=color,
+        linestyles='-',
+        linewidth=2,
+        alpha=0.9
+    )
+
+ax.set_title("Singular Values Comparison. KS_1D 6 layer MLP")
 ax.set_xlabel("Index")
 ax.set_ylabel("Value")
 ax.set_xscale("linear")
@@ -69,6 +82,5 @@ cbar.set_label("Model Width")
 
 plt.tight_layout()
 plt.savefig(filename, dpi=150)
-print(filename)
-
+print(filename) 
 plt.show()

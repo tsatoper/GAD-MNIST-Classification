@@ -3,11 +3,11 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-plot_id = '-4' 
+plot_id = 'retrain' 
 
 dir_name = f'./models/{plot_id}/metrics'
 # Define epochs to plot
-epochs = [100, 500]
+epochs = [10, 500]
 yscale = 'linear'
 save_path = f'loss_{plot_id}_{yscale}.png'
 

@@ -17,7 +17,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data import Subset
 from torch.amp import autocast, GradScaler
 
-from utilities import train, test, compute_and_save_singular_values
+from utilities import CIFAR100Loader, train, test, compute_and_save_singular_values
 from pytorch_ood.model import WideResNet
 
 parser = argparse.ArgumentParser()
@@ -27,21 +27,9 @@ parser.add_argument('--output-dir', type=str, default='./default')
 parser.add_argument('--depth', type=int, default=28, help='WRN depth (must be 6n+4)')
 parser.add_argument('--widen-factor', type=int, default=10, help='WRN width multiplier')
 parser.add_argument('--dropout', type=float, default=0.3, help='Dropout rate')
-parser.add_argument('--seed', type=int, default=42, help='Random seed')
+parser.add_argument('--samples', type=int, default=50000, help='Number of CIFAR100 samples')
 parser.add_argument('--use-mixed-precision', action='store_true', help='Enable mixed precision training')
 args = parser.parse_args()
-
-
-# Set random seed for reproducibility
-def set_seed(seed):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-
-set_seed(args.seed)
 
 
 widen_factor = args.widen_factor
@@ -49,7 +37,7 @@ depth = args.depth
 filename = f"wrn{depth}_{widen_factor}_job{args.job_num[:7]}"
 num_epochs = 200
 save_at_this_epoch = [1, 50, 100, 150, 200]
-samples = 50000  # Full CIFAR-100 training set
+samples = args.samples  # Full CIFAR-100 training set
 
 
 batch_size = 128
@@ -90,7 +78,6 @@ print(f"Dataset: CIFAR-100 ({samples} training samples)")
 print(f"Batch size: {batch_size}")
 print(f"Learning rate: {learning_rate}")
 print(f"Dropout: {args.dropout}")
-print(f"Random seed: {args.seed}")
 print(f"Mixed precision: {'Enabled' if scaler else 'Disabled (Original Paper)'}")
 print(f"Device: {device}")
 print(f"Loss function: {loss_fn}")
@@ -124,53 +111,15 @@ json_input = {
     'lr_gamma': 0.2,
     'weight_decay': 5e-4,
     'momentum': 0.9,
-    'random_seed': args.seed,
     'mixed_precision': scaler is not None
 }
 
-# CIFAR-100 data augmentation as per WRN paper
-transform_train = transforms.Compose([
-    transforms.RandomCrop(32, padding=4),
-    transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5071, 0.4867, 0.4408], 
-                        std=[0.2675, 0.2565, 0.2761])
-])
-
-transform_test = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5071, 0.4867, 0.4408], 
-                        std=[0.2675, 0.2565, 0.2761])
-])
-
-train_dataset_full = datasets.CIFAR100(
-    root='./data', 
-    train=True, 
-    download=True, 
-    transform=transform_train
-)
-train_dataset = Subset(train_dataset_full, range(samples))
-train_loader = DataLoader(
-    train_dataset, 
-    batch_size=batch_size, 
-    shuffle=True,
-    num_workers=4,
-    pin_memory=True
+loader = CIFAR100Loader(
+    n_samples=500,      # e.g. 5-shot per class
+    batch_size=64,
 )
 
-test_dataset_full = datasets.CIFAR100(
-    root='./data', 
-    train=False, 
-    download=True, 
-    transform=transform_test
-)
-test_loader = DataLoader(
-    test_dataset_full, 
-    batch_size=batch_size, 
-    shuffle=False,
-    num_workers=4,
-    pin_memory=True
-)
+train_loader, test_loader = loader.get_loaders()
 
 # SAVING
 args.output_dir = os.path.join(args.output_dir, f'depth{depth}')
@@ -199,6 +148,7 @@ for epoch in range(1, num_epochs + 1):
         print(f"Model weights saved at epoch {epoch} to {args.output_dir}/weights/{filename}_e{epoch}.pth")
         
         # Compute and save singular values
+        S, sv_path = compute_and_save_singular_values(model, train_loader, device, filename+'test', epoch, args.output_dir)
         S, sv_path = compute_and_save_singular_values(model, train_loader, device, filename, epoch, args.output_dir)
         print(f"Singular Values saved at epoch {epoch} to {sv_path}")
 

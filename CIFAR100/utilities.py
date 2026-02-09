@@ -1,8 +1,114 @@
+
 import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.amp import autocast, GradScaler
+import numpy as np
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, Subset
+
+
+class CIFAR100Loader:
+    def __init__(
+        self,
+        root="./data",
+        n_samples=50000,
+        batch_size=128,
+        num_workers=4,
+        seed=0
+    ):
+        assert n_samples % 100 == 0, "n_samples must be divisible by 100"
+
+        self.root = root
+        self.n_samples = n_samples
+        self.batch_size = batch_size
+        self.num_workers = num_workers
+        self.seed = seed
+
+        self.samples_per_class = n_samples // 100
+
+        self._build_transforms()
+        self._build_datasets()
+
+    def _build_transforms(self):
+        self.transform_train = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.5071, 0.4867, 0.4408],
+                std=[0.2675, 0.2565, 0.2761]
+            )
+        ])
+
+        self.transform_test = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.5071, 0.4867, 0.4408],
+                std=[0.2675, 0.2565, 0.2761]
+            )
+        ])
+
+    def _build_datasets(self):
+        # Load full training set WITHOUT transforms to select indices
+        full_train = datasets.CIFAR100(
+            root=self.root,
+            train=True,
+            download=True,
+            transform=None
+        )
+
+        targets = np.array(full_train.targets)
+        rng = np.random.default_rng(self.seed)
+
+        balanced_indices = []
+        for c in range(100):
+            class_idx = np.where(targets == c)[0]
+            chosen = rng.choice(
+                class_idx,
+                size=self.samples_per_class,
+                replace=False
+            )
+            balanced_indices.extend(chosen)
+
+        rng.shuffle(balanced_indices)
+
+        # Reload dataset with transforms
+        train_dataset_full = datasets.CIFAR100(
+            root=self.root,
+            train=True,
+            download=False,
+            transform=self.transform_train
+        )
+
+        self.train_dataset = Subset(train_dataset_full, balanced_indices)
+
+        self.test_dataset = datasets.CIFAR100(
+            root=self.root,
+            train=False,
+            download=True,
+            transform=self.transform_test
+        )
+
+    def get_loaders(self):
+        train_loader = DataLoader(
+            self.train_dataset,
+            batch_size=self.batch_size,
+            shuffle=True,
+            num_workers=self.num_workers,
+            pin_memory=True
+        )
+
+        test_loader = DataLoader(
+            self.test_dataset,
+            batch_size=self.batch_size,
+            shuffle=False,
+            num_workers=self.num_workers,
+            pin_memory=True
+        )
+
+        return train_loader, test_loader
 
 
 def train(model, train_loader, loss_fn, optimizer, scheduler, device, epoch, scaler=None, n_classes=100):

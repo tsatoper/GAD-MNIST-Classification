@@ -5,7 +5,7 @@
 #PBS -l select=1:ncpus=1:ngpus=1:mem=5GB
 #PBS -l walltime=00:15:00
 #PBS -j oe
-# qsub -J 0-20 pipeline.sh
+# qsub -J 0-49 pipeline.sh
 # qsub -v PBS_ARRAY_INDEX=0 pipeline.sh
 
 
@@ -18,7 +18,7 @@ echo "Job started at $(date)"
 python -u /glade/derecho/scratch/tsatoperry/GAD/MNIST/pipeline.py \
     --array-idx $PBS_ARRAY_INDEX \
     --job-num $PBS_JOBID \
-    --output-dir /glade/derecho/scratch/tsatoperry/GAD/MNIST/models/retrain \
+    --output-dir /glade/derecho/scratch/tsatoperry/GAD/MNIST/models/ddN2 \
     --learning-rate 1e-3
 
 

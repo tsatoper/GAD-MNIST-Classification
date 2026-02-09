@@ -1,9 +1,18 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch..amp import autocast
 import os
+import numpy as np
+from torch.utils.data import DataLoader, TensorDataset
+
+
+# ============================================================================
+# Models
+# ============================================================================
 
 class AR_MLP_one_layer(nn.Module):
+    """Single hidden layer MLP for autoregressive time stepping."""
     def __init__(self, input_dim=1024, hidden_dim=1024, output_dim=1024):
         super().__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
@@ -18,7 +27,9 @@ class AR_MLP_one_layer(nn.Module):
             return out, features  # return last hidden layer activations
         return out
 
+
 class AR_MLP_deep(nn.Module):
+    """Deep MLP (5 hidden layers) for autoregressive time stepping."""
     def __init__(self, input_dim=1024, hidden_dim=1024, output_dim=1024):
         super().__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
@@ -40,9 +51,174 @@ class AR_MLP_deep(nn.Module):
             return out, features  # return last hidden layer activations
         return out
 
-def compute_and_save_singular_values(model, data_loader, device, model_name, epoch, output_dir):
-    # Compute and save singular values of hidden layer activations (penultimate features).
 
+# ============================================================================
+# Training Functions
+# ============================================================================
+
+def train_ks(model, train_loader, loss_fn, optimizer, scheduler, device, epoch, dt=1e-3, scaler=None):
+    """
+    Training function for Kuramoto-Sivashinsky model.
+    
+    Args:
+        model: Neural network model
+        train_loader: DataLoader for training data
+        loss_fn: Loss function
+        optimizer: Optimizer
+        scheduler: Learning rate scheduler
+        device: Device to train on
+        epoch: Current epoch number
+        dt: Time step for KS integration
+        scaler: GradScaler for mixed precision (None to disable)
+    
+    Returns:
+        avg_loss: Average training loss for the epoch
+    """
+    model.train()
+    total_loss = 0.0
+    
+    for batch_idx, (data, target) in enumerate(train_loader):
+        data, target = data.to(device), target.to(device)
+        
+        optimizer.zero_grad()
+        
+        # Mixed precision training
+        if scaler is not None:
+            with autocast():
+                output = model(data)
+                predicted_next = data + output * dt
+                loss = loss_fn(predicted_next, target)
+            
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            # Standard FP32 training
+            output = model(data)
+            predicted_next = data + output * dt
+            loss = loss_fn(predicted_next, target)
+            loss.backward()
+            optimizer.step()
+        
+        total_loss += loss.item()
+    
+    # Step scheduler after epoch
+    scheduler.step()
+    
+    avg_loss = total_loss / len(train_loader)
+    current_lr = optimizer.param_groups[0]['lr']
+    print(f'Epoch {epoch}: Train Loss: {avg_loss:.6g}, LR: {current_lr:.6e}')
+    
+    return avg_loss
+
+
+def train_ks_noEuler(model, train_loader, loss_fn, optimizer, scheduler, device, epoch, dt=1e-3, scaler=None):
+    """
+    Training function for Kuramoto-Sivashinsky model.
+    
+    Args:
+        model: Neural network model
+        train_loader: DataLoader for training data
+        loss_fn: Loss function
+        optimizer: Optimizer
+        scheduler: Learning rate scheduler
+        device: Device to train on
+        epoch: Current epoch number
+        dt: Time step for KS integration
+        scaler: GradScaler for mixed precision (None to disable)
+    
+    Returns:
+        avg_loss: Average training loss for the epoch
+    """
+    model.train()
+    total_loss = 0.0
+    
+    for batch_idx, (data, target) in enumerate(train_loader):
+        data, target = data.to(device), target.to(device)
+        
+        optimizer.zero_grad()
+        
+        # Mixed precision training
+        if scaler is not None:
+            with autocast():
+                output = model(data)
+                loss = loss_fn(output, target)
+            
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            # Standard FP32 training
+            output = model(data)
+            loss = loss_fn(output, target)
+            loss.backward()
+            optimizer.step()
+        
+        total_loss += loss.item()
+    
+    # Step scheduler after epoch
+    scheduler.step()
+    
+    avg_loss = total_loss / len(train_loader)
+    current_lr = optimizer.param_groups[0]['lr']
+    print(f'Epoch {epoch}: Train Loss: {avg_loss:.6g}, LR: {current_lr:.6e}')
+    
+    return avg_loss
+
+
+def test_ks(model, test_loader, loss_fn, device, dt=1e-3):
+    """
+    Validation/test function for Kuramoto-Sivashinsky model.
+    
+    Args:
+        model: Neural network model
+        test_loader: DataLoader for test/validation data
+        loss_fn: Loss function
+        device: Device to evaluate on
+        dt: Time step for KS integration
+    
+    Returns:
+        avg_loss: Average test loss
+    """
+    model.eval()
+    test_loss = 0.0
+    
+    with torch.no_grad():
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            
+            output = model(data)
+            predicted_next = data + output * dt
+            loss = loss_fn(predicted_next, target)
+            
+            test_loss += loss.item()
+    
+    avg_loss = test_loss / len(test_loader)
+    print(f'  Val Loss: {avg_loss:.6g}')
+    
+    return avg_loss
+
+
+# ============================================================================
+# Singular Value Computation
+# ============================================================================
+
+def compute_and_save_singular_values(model, data_loader, device, model_name, epoch, output_dir):
+    """
+    Compute and save singular values of hidden layer activations (penultimate features).
+    
+    Args:
+        model: Neural network model with return_features capability
+        data_loader: DataLoader for data
+        device: Device to compute on
+        model_name: Name for saving files
+        epoch: Current epoch number
+        output_dir: Directory to save singular values
+    
+    Returns:
+        S: Singular values tensor
+        sv_path: Path where singular values were saved
+    """
     print("\n" + "="*50)
     print(f"Computing singular values at epoch {epoch}...")
     print("="*50)
@@ -73,24 +249,23 @@ def compute_and_save_singular_values(model, data_loader, device, model_name, epo
     sv_dir = os.path.join(output_dir, 'singular_values')
     os.makedirs(sv_dir, exist_ok=True)
     sv_path = os.path.join(sv_dir, f'{model_name}_e{epoch}.pt')
-    torch.save(S, sv_path)
+    torch.save(S.cpu(), sv_path)
     print(f"Singular values saved to {sv_path}")
 
     return S, sv_path
 
 
-import numpy as np
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-
+# ============================================================================
+# Data Loading
+# ============================================================================
 
 def load_ks_data(train_data_path, val_data_path, batch_size=256, num_workers=4):
     """
     Load KS training and validation data and create DataLoaders.
     
     Args:
-        train_data_path: Path to training data .npy file (1024, 200000)
-        val_data_path: Path to validation data .npy file (1024, 50000)
+        train_data_path: Path to training data .npy file (timesteps, spatial_dim)
+        val_data_path: Path to validation data .npy file (timesteps, spatial_dim)
         batch_size: Batch size for DataLoaders
         num_workers: Number of workers for data loading
     
@@ -149,4 +324,3 @@ def load_ks_data(train_data_path, val_data_path, batch_size=256, num_workers=4):
     n_val = X_val.shape[0]
 
     return train_loader, val_loader, input_dim, n_train, n_val
-    

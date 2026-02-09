@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 
-plot_id = 'long'
-dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/KS_1d/deep/{plot_id}/metrics/'
+plot_id = 'gobig'
+dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/KS_1d/AR_MLP_deep/{plot_id}/metrics/'
 yscale = 'linear'
-epochs = [100]
+epochs = [200]
 
 
 # Dictionary to store data for each epoch

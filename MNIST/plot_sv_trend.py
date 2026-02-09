@@ -4,14 +4,12 @@ import torch
 import matplotlib.pyplot as plt
 import numpy as np
 
-model_dir = 'lr1e-3'
-epoch = 50
+model_dir = 'retrain'
+epoch = 500
 directory = f"/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/{model_dir}/singular_values"
 filename = f'sv_trend_{model_dir}.png'
 
 # Regex to catch both hidden_dim1024_sv.pt AND hidden_dim4096.pt
-pattern = re.compile(r"hidden_dim(\d+)(?:_sv)?\_epoch2000_training.pt$")
-pattern = re.compile(r"w(\d+)\_job(\d+)\_e50.pt$")
 pattern = re.compile(rf"w(\d+)\_job(\d+)\_e{epoch}.pt$")
 
 files = []
@@ -34,7 +32,7 @@ width = []
 for hd, path in files:
     t = torch.load(path, map_location="cpu", weights_only=True)
     sv = t.numpy()
-    sv[sv<1e-16] = 1e-16
+    sv[sv<1e-16] = 1e-8
     sv_arrays.append(sv)
     width.append(hd)
 

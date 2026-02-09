@@ -1,11 +1,12 @@
-currently running 2 jobs with varying widen factors
-5007679 - autocast version
-5007735 - original paper version
-compare times, remove autocast if negligible
-
+arching:
+make sure our version is faithful to the paper
+consider doing CIFAR 10
 look at svd, consider changin depth or increasing widen factor
 look at loss
 
-make sure our version is faithful to the paper
 
-consider doing CIFAR 10
+current:
+running a widen factor 0-11 job, these should be the standard
+running a 0-15 5000 samples job (N2)
+running 12-15 50000 samples job (N3)
+mean sv is going down, see if it ever goes up
