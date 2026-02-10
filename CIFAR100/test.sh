@@ -25,10 +25,10 @@ echo "Job ID: $PBS_JOBID"
 echo "=================================================="
 
 python -u /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/test.py \
-  --weights /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_500/depth28/weights \
-  --output-dir /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_500/depth28 \
-  --widen-factor $WIDEN_FACTOR \
-  --samples 500
+  --weights /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28/weights \
+  --output-dir /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28 \
+  --widen-factor 20 \
+  --samples 10000
 
 END_TIME=$(date +%s)
 echo "Job ended at $(date)"

@@ -25,7 +25,7 @@ parser.add_argument('--learning-rate', type=float, default=1e-3)
 args = parser.parse_args()
 
 
-width = args.array_idx % 30 +1 #128 = 2^7 2^13 #2**args.array_idx 
+width = args.array_idx % 30 + 31 #128 = 2^7 2^13 #2**args.array_idx 
 filename = f"w{width}_job{args.job_num[:7]}"
 num_epochs = 2000
 save_at_this_epoch = [1, 500, 2000]
@@ -104,6 +104,7 @@ for epoch in range(1, num_epochs + 1):
         print(f"Model weights saved at epoch {epoch} to {args.output_dir}/weights/{filename}_e{epoch}.pth")
         
         # Compute and save singular values
+        S, sv_path = compute_and_save_singular_values(model, test_loader, device, filename+'test', epoch, args.output_dir)
         S, sv_path = compute_and_save_singular_values(model, train_loader, device, filename, epoch, args.output_dir)
         print(f"Singular Values saved at epoch {epoch} to {sv_path}")
 

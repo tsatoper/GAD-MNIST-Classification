@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 
-plot_id = 'n_50000'
+plot_id = 'n_10000'
 dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/{plot_id}/depth28/metrics/'
 yscale = 'linear'
 epochs = [200]

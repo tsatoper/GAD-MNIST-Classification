@@ -14,3 +14,10 @@ make sure we still have DD and try to get something out of SV
 STILL UNSURE ABUOT 
 with 128 256 512 1024 2048 4096 Singular values vs loss (see loss_sv_testing_500.png)
 rerun that
+
+recreate Ugly curve with MNIST
+
+Running test svd for epoch 2000 1-30 width
+use plot ugly on them
+
+run the same model on same width to do svs vs loss

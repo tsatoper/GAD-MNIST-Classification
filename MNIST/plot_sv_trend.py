@@ -4,8 +4,8 @@ import torch
 import matplotlib.pyplot as plt
 import numpy as np
 
-model_dir = 'retrain'
-epoch = 500
+model_dir = 'ddtrueN2'
+epoch = 2000
 directory = f"/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/{model_dir}/singular_values"
 filename = f'sv_trend_{model_dir}.png'
 
@@ -32,7 +32,7 @@ width = []
 for hd, path in files:
     t = torch.load(path, map_location="cpu", weights_only=True)
     sv = t.numpy()
-    sv[sv<1e-16] = 1e-8
+    sv[sv<1e-7] = 1e-7
     sv_arrays.append(sv)
     width.append(hd)
 

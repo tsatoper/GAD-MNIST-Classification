@@ -9,6 +9,7 @@ dir_name = f'./models/{plot_id}/metrics'
 # Define epochs to plot
 epochs = [500, 2000]
 yscale = 'linear'
+xscale = 'linear'
 save_path = f'loss_{plot_id}_{yscale}.png'
 
 
@@ -94,7 +95,7 @@ else:
               fontsize=15, fontweight='bold')
     plt.legend(fontsize=9, loc='best', ncol=2)
     plt.grid(True, alpha=0.3)
-    plt.xscale('log')
+    plt.xscale(xscale)
     plt.yscale(yscale)
     plt.tight_layout()
 

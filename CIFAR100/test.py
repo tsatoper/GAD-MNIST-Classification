@@ -52,7 +52,7 @@ model = WideResNet(
     drop_rate=args.dropout
 ).to(device)
 
-state = torch.load(ckpt_path, map_location=device)
+state = torch.load(ckpt_path, map_location=device, weights_only=True)
 model.load_state_dict(state)
 model.eval()
 
