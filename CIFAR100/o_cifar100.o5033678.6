@@ -1,0 +1,168 @@
+Job started at Tue Feb 10 12:01:42 AM MST 2026
+==================================================
+Running WideResNet with widen_factor=7
+Array Index: 6
+Job ID: 5033678[6].desched1
+==================================================
+============================================================
+Wide Residual Network Training - CIFAR-100
+============================================================
+Model: WRN-28-7
+Dataset: CIFAR-100 (10000 training samples)
+Batch size: 128
+Learning rate: 0.1
+Dropout: 0.3
+Mixed precision: Enabled
+Device: cuda
+Loss function: CrossEntropyLoss()
+Optimizer: SGD (momentum=0.9, weight_decay=5e-4, nesterov=True)
+Scheduler: MultiStepLR (milestones=[60, 120, 160], gamma=0.2)
+Total epochs: 200
+Checkpoint epochs: [1, 50, 100, 150, 200]
+Parameters: 17,925,940 (17.93M)
+Model size: 71.75 MB (0.0668 GB)
+============================================================
+Files already downloaded and verified
+Files already downloaded and verified
+Train subset class counts: min=100, max=100
+Train Epoch 1: Avg Loss: 4.4054, Accuracy: 342/10000 (3.42%), LR: 0.100000
+
+Test set: Avg Loss: 4.6594, Accuracy: 334/10000 (3.34%)
+
+Model weights saved at epoch 1 to /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28/weights/wrn28_7_job5033678_e1.pth
+
+==================================================
+Computing singular values at epoch 1...
+==================================================
+Processed batch 50/79
+Processed batch 79/79
+Collected hidden activations shape: torch.Size([10000, 448])
+
+Singular values: [835.6488  631.0305  401.6832  260.64166 175.42958]...[0.68379647 0.6806232  0.6716518  0.6654685  0.6477897 ]
+Singular values saved to /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28/singular_values/wrn28_7_job5033678test_e1.pt
+
+==================================================
+Computing singular values at epoch 1...
+==================================================
+Processed batch 50/79
+Processed batch 79/79
+Collected hidden activations shape: torch.Size([10000, 448])
+
+Singular values: [814.1944  597.06415 370.02216 247.662   163.75574]...[0.69494015 0.68839663 0.6869728  0.6703363  0.6671699 ]
+Singular values saved to /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28/singular_values/wrn28_7_job5033678_e1.pt
+Singular Values saved at epoch 1 to /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28/singular_values/wrn28_7_job5033678_e1.pt
+Train Epoch 2: Avg Loss: 4.0331, Accuracy: 690/10000 (6.90%), LR: 0.100000
+Train Epoch 3: Avg Loss: 3.8217, Accuracy: 977/10000 (9.77%), LR: 0.100000
+Train Epoch 4: Avg Loss: 3.6657, Accuracy: 1163/10000 (11.63%), LR: 0.100000
+Train Epoch 5: Avg Loss: 3.6100, Accuracy: 1323/10000 (13.23%), LR: 0.100000
+Train Epoch 6: Avg Loss: 3.3950, Accuracy: 1752/10000 (17.52%), LR: 0.100000
+Train Epoch 7: Avg Loss: 3.2167, Accuracy: 1998/10000 (19.98%), LR: 0.100000
+Train Epoch 8: Avg Loss: 3.0880, Accuracy: 2259/10000 (22.59%), LR: 0.100000
+Train Epoch 9: Avg Loss: 2.9299, Accuracy: 2549/10000 (25.49%), LR: 0.100000
+Train Epoch 10: Avg Loss: 2.7972, Accuracy: 2858/10000 (28.58%), LR: 0.100000
+Train Epoch 11: Avg Loss: 2.6749, Accuracy: 3038/10000 (30.38%), LR: 0.100000
+Train Epoch 12: Avg Loss: 2.5668, Accuracy: 3250/10000 (32.50%), LR: 0.100000
+Train Epoch 13: Avg Loss: 2.4500, Accuracy: 3503/10000 (35.03%), LR: 0.100000
+Train Epoch 14: Avg Loss: 2.3408, Accuracy: 3738/10000 (37.38%), LR: 0.100000
+Train Epoch 15: Avg Loss: 2.2653, Accuracy: 3925/10000 (39.25%), LR: 0.100000
+Train Epoch 16: Avg Loss: 2.1804, Accuracy: 4112/10000 (41.12%), LR: 0.100000
+Train Epoch 17: Avg Loss: 2.0782, Accuracy: 4317/10000 (43.17%), LR: 0.100000
+Train Epoch 18: Avg Loss: 1.9782, Accuracy: 4550/10000 (45.50%), LR: 0.100000
+Train Epoch 19: Avg Loss: 1.9048, Accuracy: 4664/10000 (46.64%), LR: 0.100000
+Train Epoch 20: Avg Loss: 1.8726, Accuracy: 4837/10000 (48.37%), LR: 0.100000
+Train Epoch 21: Avg Loss: 1.7656, Accuracy: 5038/10000 (50.38%), LR: 0.100000
+Train Epoch 22: Avg Loss: 1.6937, Accuracy: 5217/10000 (52.17%), LR: 0.100000
+Train Epoch 23: Avg Loss: 1.6441, Accuracy: 5265/10000 (52.65%), LR: 0.100000
+Train Epoch 24: Avg Loss: 1.5854, Accuracy: 5452/10000 (54.52%), LR: 0.100000
+Train Epoch 25: Avg Loss: 1.5224, Accuracy: 5647/10000 (56.47%), LR: 0.100000
+Train Epoch 26: Avg Loss: 1.5149, Accuracy: 5574/10000 (55.74%), LR: 0.100000
+Train Epoch 27: Avg Loss: 1.4253, Accuracy: 5899/10000 (58.99%), LR: 0.100000
+Train Epoch 28: Avg Loss: 1.3685, Accuracy: 6015/10000 (60.15%), LR: 0.100000
+Train Epoch 29: Avg Loss: 1.3138, Accuracy: 6142/10000 (61.42%), LR: 0.100000
+Train Epoch 30: Avg Loss: 1.2481, Accuracy: 6285/10000 (62.85%), LR: 0.100000
+Train Epoch 31: Avg Loss: 1.1921, Accuracy: 6463/10000 (64.63%), LR: 0.100000
+Train Epoch 32: Avg Loss: 1.1831, Accuracy: 6481/10000 (64.81%), LR: 0.100000
+Train Epoch 33: Avg Loss: 1.1216, Accuracy: 6625/10000 (66.25%), LR: 0.100000
+Train Epoch 34: Avg Loss: 1.0777, Accuracy: 6805/10000 (68.05%), LR: 0.100000
+Train Epoch 35: Avg Loss: 1.0998, Accuracy: 6760/10000 (67.60%), LR: 0.100000
+Train Epoch 36: Avg Loss: 1.0644, Accuracy: 6862/10000 (68.62%), LR: 0.100000
+Train Epoch 37: Avg Loss: 0.9810, Accuracy: 7091/10000 (70.91%), LR: 0.100000
+Train Epoch 38: Avg Loss: 0.9407, Accuracy: 7116/10000 (71.16%), LR: 0.100000
+Train Epoch 39: Avg Loss: 0.9433, Accuracy: 7208/10000 (72.08%), LR: 0.100000
+Train Epoch 40: Avg Loss: 0.8502, Accuracy: 7428/10000 (74.28%), LR: 0.100000
+Train Epoch 41: Avg Loss: 0.8956, Accuracy: 7323/10000 (73.23%), LR: 0.100000
+Train Epoch 42: Avg Loss: 0.8657, Accuracy: 7382/10000 (73.82%), LR: 0.100000
+Train Epoch 43: Avg Loss: 0.8802, Accuracy: 7347/10000 (73.47%), LR: 0.100000
+Train Epoch 44: Avg Loss: 0.8085, Accuracy: 7551/10000 (75.51%), LR: 0.100000
+Train Epoch 45: Avg Loss: 0.8100, Accuracy: 7569/10000 (75.69%), LR: 0.100000
+Train Epoch 46: Avg Loss: 0.7976, Accuracy: 7535/10000 (75.35%), LR: 0.100000
+Train Epoch 47: Avg Loss: 0.7495, Accuracy: 7731/10000 (77.31%), LR: 0.100000
+Train Epoch 48: Avg Loss: 0.6879, Accuracy: 7845/10000 (78.45%), LR: 0.100000
+Train Epoch 49: Avg Loss: 0.6315, Accuracy: 8083/10000 (80.83%), LR: 0.100000
+Train Epoch 50: Avg Loss: 0.6373, Accuracy: 8069/10000 (80.69%), LR: 0.100000
+
+Test set: Avg Loss: 3.3149, Accuracy: 4082/10000 (40.82%)
+
+Model weights saved at epoch 50 to /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28/weights/wrn28_7_job5033678_e50.pth
+
+==================================================
+Computing singular values at epoch 50...
+==================================================
+Processed batch 50/79
+Processed batch 79/79
+Collected hidden activations shape: torch.Size([10000, 448])
+
+Singular values: [900.6654  364.6594  284.03268 245.45923 240.1314 ]...[3.6934164 3.6831522 3.608884  3.381156  2.4569402]
+Singular values saved to /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28/singular_values/wrn28_7_job5033678test_e50.pt
+
+==================================================
+Computing singular values at epoch 50...
+==================================================
+Processed batch 50/79
+Processed batch 79/79
+Collected hidden activations shape: torch.Size([10000, 448])
+
+Singular values: [750.52954 302.9691  242.02403 219.99054 210.53261]...[3.374815  3.3433151 3.271858  3.113561  2.2226458]
+Singular values saved to /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28/singular_values/wrn28_7_job5033678_e50.pt
+Singular Values saved at epoch 50 to /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000/depth28/singular_values/wrn28_7_job5033678_e50.pt
+Train Epoch 51: Avg Loss: 0.6364, Accuracy: 8056/10000 (80.56%), LR: 0.100000
+Train Epoch 52: Avg Loss: 0.5291, Accuracy: 8365/10000 (83.65%), LR: 0.100000
+Train Epoch 53: Avg Loss: 0.5845, Accuracy: 8152/10000 (81.52%), LR: 0.100000
+Train Epoch 54: Avg Loss: 0.6217, Accuracy: 8129/10000 (81.29%), LR: 0.100000
+Train Epoch 55: Avg Loss: 0.5531, Accuracy: 8345/10000 (83.45%), LR: 0.100000
+Train Epoch 56: Avg Loss: 0.5864, Accuracy: 8204/10000 (82.04%), LR: 0.100000
+Train Epoch 57: Avg Loss: 0.5360, Accuracy: 8379/10000 (83.79%), LR: 0.100000
+Train Epoch 58: Avg Loss: 0.6455, Accuracy: 8042/10000 (80.42%), LR: 0.100000
+Train Epoch 59: Avg Loss: 0.5578, Accuracy: 8330/10000 (83.30%), LR: 0.100000
+Train Epoch 60: Avg Loss: 0.6002, Accuracy: 8203/10000 (82.03%), LR: 0.020000
+Train Epoch 61: Avg Loss: 0.2347, Accuracy: 9418/10000 (94.18%), LR: 0.020000
+Train Epoch 62: Avg Loss: 0.1138, Accuracy: 9774/10000 (97.74%), LR: 0.020000
+Train Epoch 63: Avg Loss: 0.0847, Accuracy: 9866/10000 (98.66%), LR: 0.020000
+Train Epoch 64: Avg Loss: 0.0674, Accuracy: 9902/10000 (99.02%), LR: 0.020000
+Train Epoch 65: Avg Loss: 0.0585, Accuracy: 9932/10000 (99.32%), LR: 0.020000
+Train Epoch 66: Avg Loss: 0.0607, Accuracy: 9925/10000 (99.25%), LR: 0.020000
+Train Epoch 67: Avg Loss: 0.0536, Accuracy: 9939/10000 (99.39%), LR: 0.020000
+Train Epoch 68: Avg Loss: 0.0502, Accuracy: 9941/10000 (99.41%), LR: 0.020000
+Train Epoch 69: Avg Loss: 0.0439, Accuracy: 9940/10000 (99.40%), LR: 0.020000
+Train Epoch 70: Avg Loss: 0.0360, Accuracy: 9966/10000 (99.66%), LR: 0.020000
+Train Epoch 71: Avg Loss: 0.0335, Accuracy: 9964/10000 (99.64%), LR: 0.020000
+Train Epoch 72: Avg Loss: 0.0304, Accuracy: 9981/10000 (99.81%), LR: 0.020000
+Train Epoch 73: Avg Loss: 0.0302, Accuracy: 9979/10000 (99.79%), LR: 0.020000
+Train Epoch 74: Avg Loss: 0.0284, Accuracy: 9982/10000 (99.82%), LR: 0.020000
+Train Epoch 75: Avg Loss: 0.0276, Accuracy: 9981/10000 (99.81%), LR: 0.020000
+Train Epoch 76: Avg Loss: 0.0250, Accuracy: 9994/10000 (99.94%), LR: 0.020000
+Train Epoch 77: Avg Loss: 0.0259, Accuracy: 9978/10000 (99.78%), LR: 0.020000
+Train Epoch 78: Avg Loss: 0.0259, Accuracy: 9985/10000 (99.85%), LR: 0.020000
+Train Epoch 79: Avg Loss: 0.0250, Accuracy: 9984/10000 (99.84%), LR: 0.020000
+Train Epoch 80: Avg Loss: 0.0223, Accuracy: 9990/10000 (99.90%), LR: 0.020000
+Train Epoch 81: Avg Loss: 0.0230, Accuracy: 9990/10000 (99.90%), LR: 0.020000
+Train Epoch 82: Avg Loss: 0.0253, Accuracy: 9983/10000 (99.83%), LR: 0.020000
+Train Epoch 83: Avg Loss: 0.0224, Accuracy: 9995/10000 (99.95%), LR: 0.020000
+Train Epoch 84: Avg Loss: 0.0302, Accuracy: 9981/10000 (99.81%), LR: 0.020000
+Train Epoch 85: Avg Loss: 0.0200, Accuracy: 9993/10000 (99.93%), LR: 0.020000
+Train Epoch 86: Avg Loss: 0.0230, Accuracy: 9986/10000 (99.86%), LR: 0.020000
+Train Epoch 87: Avg Loss: 0.0322, Accuracy: 9964/10000 (99.64%), LR: 0.020000
+Train Epoch 88: Avg Loss: 0.0307, Accuracy: 9976/10000 (99.76%), LR: 0.020000
+Train Epoch 89: Avg Loss: 0.0259, Accuracy: 9979/10000 (99.79%), LR: 0.020000
+Train Epoch 90: Avg Loss: 0.0350, Accuracy: 9958/10000 (99.58%), LR: 0.020000
+Train Epoch 91: Avg Loss: 0.0227, Accuracy: 9983/10000 (99.83%), LR: 0.020000

@@ -73,6 +73,7 @@ class CIFAR100Loader:
             balanced_indices.extend(chosen)
 
         rng.shuffle(balanced_indices)
+        
 
         # Reload dataset with transforms
         train_dataset_full = datasets.CIFAR100(
@@ -90,6 +91,13 @@ class CIFAR100Loader:
             download=True,
             transform=self.transform_test
         )
+        # Validate
+        subset_indices = self.train_dataset.indices
+        subset_targets = np.array(train_dataset_full.targets)[subset_indices]
+
+        class_counts = np.bincount(subset_targets, minlength=100)
+
+        print(f"Train subset class counts: min={class_counts.min()}, max={class_counts.max()}")
 
     def get_loaders(self):
         train_loader = DataLoader(
@@ -222,10 +230,24 @@ def compute_and_save_singular_values(model, data_loader, device, filename, epoch
 
     U, S, Vh = torch.linalg.svd(Phi, full_matrices=False)
     print(f"\nSingular values: {S[:5].numpy()}...{S[-5:].numpy()}")
-        
+    os.makedirs(os.path.join(output_dir, 'singular_values'), exist_ok=True)
     sv_path = os.path.join(output_dir, 'singular_values', f'{filename}_e{epoch}.pt')
 
     torch.save(S.cpu(), sv_path)
     print(f"Singular values saved to {sv_path}")
     
     return S, sv_path
+
+if __name__ == "__main__":
+    # Initialize the loader
+    loader = CIFAR100Loader(
+        root="./data",
+        n_samples=500,
+        batch_size=128,
+        num_workers=4,
+        seed=0
+    )
+
+    # Trigger dataset construction and printing
+    train_loader, test_loader = loader.get_loaders()
+

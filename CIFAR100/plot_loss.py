@@ -7,7 +7,7 @@ import re
 plot_id = 'n_50000'
 dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/{plot_id}/depth28/metrics/'
 yscale = 'linear'
-epochs = [50, 200]
+epochs = [200]
 
 
 # Dictionary to store data for each epoch
@@ -91,11 +91,11 @@ for idx, epoch in enumerate(epochs):
 
 plt.xlabel('Width', fontsize=13)
 plt.ylabel(f'Loss ({yscale})', fontsize=13)
-plt.title(f'Train vs Val Loss by Width ({plot_id})', 
+plt.title(f'Train vs Test Loss by Width CIFAR100({plot_id})', 
           fontsize=15, fontweight='bold')
 plt.legend(fontsize=10, loc='best', ncol=2)
 plt.grid(True, alpha=0.3)
-plt.xscale('log')
+plt.xscale('linear')
 plt.yscale(yscale)
 plt.tight_layout()
 

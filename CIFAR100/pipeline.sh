@@ -5,7 +5,7 @@
 #PBS -l select=1:ncpus=8:ngpus=1:mem=32GB
 #PBS -l walltime=11:59:00
 #PBS -j oe
-# qsub -J 0-11 pipeline.sh
+# qsub -J 0-15 pipeline.sh
 # qsub -v PBS_ARRAY_INDEX=0 pipeline.sh
 
 
@@ -15,7 +15,7 @@ conda activate py2d_env
 START_TIME=$(date +%s)
 echo "Job started at $(date)"
 
-WIDEN_FACTORS=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
+WIDEN_FACTORS=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 20)
 WIDEN_FACTOR=${WIDEN_FACTORS[$PBS_ARRAY_INDEX]}
 
 echo "=================================================="
@@ -27,10 +27,10 @@ echo "=================================================="
 python -u /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/pipeline.py \
     --array-idx $PBS_ARRAY_INDEX \
     --job-num $PBS_JOBID \
-    --output-dir /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_5000 \
+    --output-dir /glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/n_10000 \
     --depth 28 \
     --widen-factor $WIDEN_FACTOR \
-    --samples 5000 \
+    --samples 10000 \
     --use-mixed-precision
 
 

@@ -25,21 +25,21 @@ parser.add_argument('--learning-rate', type=float, default=1e-3)
 args = parser.parse_args()
 
 
-width = args.array_idx % 25 + 5 #128 = 2^7 2^13 #2**args.array_idx 
+width = args.array_idx % 30 +1 #128 = 2^7 2^13 #2**args.array_idx 
 filename = f"w{width}_job{args.job_num[:7]}"
-num_epochs = 500
-save_at_this_epoch = [1, 10, 100, 500]
+num_epochs = 2000
+save_at_this_epoch = [1, 500, 2000]
 samples = 4000
 
 
-batch_size = 1024
+batch_size = 2048
 learning_rate = args.learning_rate
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_fn = nn.MSELoss()
 
 model = FCNN(hidden_dim=width).to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
-scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.99)
+scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=1)
 
 print(f"Running with width = {width}")
 print(f"Running with {samples} training samples")

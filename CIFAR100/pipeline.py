@@ -115,8 +115,8 @@ json_input = {
 }
 
 loader = CIFAR100Loader(
-    n_samples=500,      # e.g. 5-shot per class
-    batch_size=64,
+    n_samples=args.samples,      # e.g. 5-shot per class
+    batch_size=batch_size,
 )
 
 train_loader, test_loader = loader.get_loaders()
@@ -148,7 +148,7 @@ for epoch in range(1, num_epochs + 1):
         print(f"Model weights saved at epoch {epoch} to {args.output_dir}/weights/{filename}_e{epoch}.pth")
         
         # Compute and save singular values
-        S, sv_path = compute_and_save_singular_values(model, train_loader, device, filename+'test', epoch, args.output_dir)
+        S, sv_path = compute_and_save_singular_values(model, test_loader, device, filename+'test', epoch, args.output_dir)
         S, sv_path = compute_and_save_singular_values(model, train_loader, device, filename, epoch, args.output_dir)
         print(f"Singular Values saved at epoch {epoch} to {sv_path}")
 

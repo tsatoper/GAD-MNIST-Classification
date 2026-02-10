@@ -6,12 +6,12 @@ import torch
 import torch.nn as nn
 from torch.amp import autocast, GradScaler
 
-from utilities import AR_MLP_one_layer, AR_MLP_deep, compute_and_save_singular_values, load_ks_data, train_ks, test_ks, train_ks_noEuler
+from utilities import AR_MLP_1_layer, AR_MLP_deep, compute_and_save_singular_values, load_ks_data, train_ks, test_ks, train_ks_noEuler
 
 # Argument parsing
 parser = argparse.ArgumentParser()
 parser.add_argument('--job-idx', type=int, required=True)
-parser.add_argument('--model', type=str, default='AR_MLP_one_layer', choices=['AR_MLP_one_layer', 'AR_MLP_deep'])
+parser.add_argument('--model', type=str, default='AR_MLP_1_layer', choices=['AR_MLP_1_layer', 'AR_MLP_deep'])
 parser.add_argument('--output-dir', type=str, default='default')
 parser.add_argument('--train-data-path', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/train_KS_1024.npy')
 parser.add_argument('--val-data-path', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/val_KS_1024.npy')
@@ -45,8 +45,8 @@ train_loader, val_loader, input_dim, n_train, n_val = load_ks_data(
 )
 
 # Initialize model
-if args.model == 'AR_MLP_one_layer':
-    model = AR_MLP_one_layer(hidden_dim=args.hidden_dim).to(device)
+if args.model == 'AR_MLP_1_layer':
+    model = AR_MLP_1_layer(hidden_dim=args.hidden_dim).to(device)
 elif args.model == 'AR_MLP_deep':
     model = AR_MLP_deep(hidden_dim=args.hidden_dim).to(device)
 else:

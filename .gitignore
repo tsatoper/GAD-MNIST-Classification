@@ -6,4 +6,4 @@ dump/
 .tinyimagenet
 data/
 training_data/
-Tinyimagenet/
+__pycache__/

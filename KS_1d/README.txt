@@ -5,3 +5,5 @@ look at singular value spectra
 running models with train_ks_noEuler (SWITCH THIS BACK AFTER DONE in pipeline.py)
 compare their training singular values to testing singular values
 
+
+split data up into n1 n2 n3

@@ -1,0 +1,186 @@
+Job started at Mon Feb  9 11:52:22 PM MST 2026
+Job index: 11
+Hidden dim: 2048
+Training model:  h_2048_job11
+Loading training data from /glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/train_KS_1024.npy...
+Training data shape: (125000, 1024)
+Loading validation data from /glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/val_KS_1024.npy...
+Validation data shape: (50000, 1024)
+Training samples: 124999, Validation samples: 49999
+============================================================
+Kuramoto-Sivashinsky Training - AR_MLP_1_layer
+============================================================
+Model: AR_MLP_1_layer
+Hidden dimension: 2048
+Input dimension: 1024
+Parameters: 4,197,376 (4.20M)
+Model size: 16.79 MB (0.0156 GB)
+Batch size: 1024
+Learning rate: 0.001
+Time step (dt): 0.001
+Training samples: 124999
+Validation samples: 49999
+Device: cuda
+Loss function: MSELoss()
+Optimizer: AdamW
+Scheduler: ExponentialLR (gamma=0.975)
+Mixed precision: Enabled
+Total epochs: 100
+Save interval: 50 epochs
+============================================================
+Epoch 1: Train Loss: 0.0636671, LR: 9.750000e-04
+Epoch 2: Train Loss: 0.000359228, LR: 9.506250e-04
+Epoch 3: Train Loss: 0.000164134, LR: 9.268594e-04
+Epoch 4: Train Loss: 0.000105006, LR: 9.036879e-04
+Epoch 5: Train Loss: 7.64728e-05, LR: 8.810957e-04
+Epoch 6: Train Loss: 0.00014594, LR: 8.590683e-04
+Epoch 7: Train Loss: 0.000124406, LR: 8.375916e-04
+Epoch 8: Train Loss: 0.000201441, LR: 8.166518e-04
+Epoch 9: Train Loss: 0.000237192, LR: 7.962355e-04
+Epoch 10: Train Loss: 0.000207837, LR: 7.763296e-04
+Epoch 11: Train Loss: 0.000430829, LR: 7.569214e-04
+Epoch 12: Train Loss: 0.000265256, LR: 7.379983e-04
+Epoch 13: Train Loss: 8.86883e-05, LR: 7.195484e-04
+Epoch 14: Train Loss: 0.000287556, LR: 7.015597e-04
+Epoch 15: Train Loss: 0.000192857, LR: 6.840207e-04
+Epoch 16: Train Loss: 8.56314e-05, LR: 6.669202e-04
+Epoch 17: Train Loss: 0.000258472, LR: 6.502472e-04
+Epoch 18: Train Loss: 0.000100376, LR: 6.339910e-04
+Epoch 19: Train Loss: 0.000256893, LR: 6.181412e-04
+Epoch 20: Train Loss: 0.000168347, LR: 6.026877e-04
+Epoch 21: Train Loss: 0.000152352, LR: 5.876205e-04
+Epoch 22: Train Loss: 0.000121327, LR: 5.729300e-04
+Epoch 23: Train Loss: 0.000131014, LR: 5.586067e-04
+Epoch 24: Train Loss: 0.000180322, LR: 5.446416e-04
+Epoch 25: Train Loss: 0.000102472, LR: 5.310255e-04
+Epoch 26: Train Loss: 0.000186397, LR: 5.177499e-04
+Epoch 27: Train Loss: 9.12035e-05, LR: 5.048061e-04
+Epoch 28: Train Loss: 0.000143905, LR: 4.921860e-04
+Epoch 29: Train Loss: 0.000145982, LR: 4.798813e-04
+Epoch 30: Train Loss: 7.14756e-05, LR: 4.678843e-04
+Epoch 31: Train Loss: 9.17065e-05, LR: 4.561872e-04
+Epoch 32: Train Loss: 0.000106461, LR: 4.447825e-04
+Epoch 33: Train Loss: 0.000136505, LR: 4.336629e-04
+Epoch 34: Train Loss: 0.000111781, LR: 4.228214e-04
+Epoch 35: Train Loss: 8.47955e-05, LR: 4.122508e-04
+Epoch 36: Train Loss: 6.57096e-05, LR: 4.019446e-04
+Epoch 37: Train Loss: 4.10982e-05, LR: 3.918960e-04
+Epoch 38: Train Loss: 7.28944e-05, LR: 3.820986e-04
+Epoch 39: Train Loss: 0.000197288, LR: 3.725461e-04
+Epoch 40: Train Loss: 3.61784e-05, LR: 3.632324e-04
+Epoch 41: Train Loss: 3.73038e-05, LR: 3.541516e-04
+Epoch 42: Train Loss: 7.11143e-05, LR: 3.452978e-04
+Epoch 43: Train Loss: 5.33214e-05, LR: 3.366654e-04
+Epoch 44: Train Loss: 9.44918e-05, LR: 3.282488e-04
+Epoch 45: Train Loss: 2.82768e-05, LR: 3.200425e-04
+Epoch 46: Train Loss: 5.89222e-05, LR: 3.120415e-04
+Epoch 47: Train Loss: 2.45193e-05, LR: 3.042404e-04
+Epoch 48: Train Loss: 8.81506e-05, LR: 2.966344e-04
+Epoch 49: Train Loss: 1.59408e-05, LR: 2.892186e-04
+Epoch 50: Train Loss: 4.39675e-05, LR: 2.819881e-04
+  Val Loss: 1.55951e-06
+Model weights saved at epoch 50 to /glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/overfit/weights/h_2048_job11_e50.pth
+
+==================================================
+Computing singular values at epoch 50...
+==================================================
+Processed batch 49/49
+Collected hidden activations shape: torch.Size([49999, 2048])
+
+Singular values: [5016.3105 2596.9377 2125.9062 1945.4247 1155.2911]...[4.8896301e-05 3.1385371e-05 2.5442847e-05 1.9509951e-05 3.4814648e-06]
+Singular values saved to /glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/overfit/singular_values/h_2048_job11test_set_e50.pt
+
+==================================================
+Computing singular values at epoch 50...
+==================================================
+Processed batch 100/123
+Processed batch 123/123
+Collected hidden activations shape: torch.Size([124999, 2048])
+
+Singular values: [7067.6587 3577.4944 3034.3022 2868.8728 2769.9324]...[2.1003996e-05 1.4722000e-05 1.1354495e-05 5.8666878e-06 1.9548390e-06]
+Singular values saved to /glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/overfit/singular_values/h_2048_job11_e50.pt
+Singular Values saved at epoch 50 to /glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/overfit/singular_values/h_2048_job11_e50.pt
+Epoch 51: Train Loss: 6.18682e-05, LR: 2.749384e-04
+Epoch 52: Train Loss: 3.05687e-05, LR: 2.680649e-04
+Epoch 53: Train Loss: 2.46073e-05, LR: 2.613633e-04
+Epoch 54: Train Loss: 5.12876e-05, LR: 2.548292e-04
+Epoch 55: Train Loss: 4.68492e-05, LR: 2.484585e-04
+Epoch 56: Train Loss: 1.92686e-05, LR: 2.422470e-04
+Epoch 57: Train Loss: 2.57072e-05, LR: 2.361909e-04
+Epoch 58: Train Loss: 3.81925e-05, LR: 2.302861e-04
+Epoch 59: Train Loss: 2.21725e-05, LR: 2.245289e-04
+Epoch 60: Train Loss: 3.34099e-05, LR: 2.189157e-04
+Epoch 61: Train Loss: 2.67779e-05, LR: 2.134428e-04
+Epoch 62: Train Loss: 2.55591e-05, LR: 2.081068e-04
+Epoch 63: Train Loss: 1.94671e-05, LR: 2.029041e-04
+Epoch 64: Train Loss: 3.08618e-05, LR: 1.978315e-04
+Epoch 65: Train Loss: 4.00652e-05, LR: 1.928857e-04
+Epoch 66: Train Loss: 7.94569e-06, LR: 1.880636e-04
+Epoch 67: Train Loss: 2.03761e-05, LR: 1.833620e-04
+Epoch 68: Train Loss: 1.71734e-05, LR: 1.787779e-04
+Epoch 69: Train Loss: 1.63522e-05, LR: 1.743085e-04
+Epoch 70: Train Loss: 1.72103e-05, LR: 1.699508e-04
+Epoch 71: Train Loss: 1.69144e-05, LR: 1.657020e-04
+Epoch 72: Train Loss: 1.84718e-05, LR: 1.615594e-04
+Epoch 73: Train Loss: 2.20765e-05, LR: 1.575205e-04
+Epoch 74: Train Loss: 1.63532e-05, LR: 1.535824e-04
+Epoch 75: Train Loss: 1.39929e-05, LR: 1.497429e-04
+Epoch 76: Train Loss: 5.86593e-06, LR: 1.459993e-04
+Epoch 77: Train Loss: 1.70294e-05, LR: 1.423493e-04
+Epoch 78: Train Loss: 1.15829e-05, LR: 1.387906e-04
+Epoch 79: Train Loss: 1.13607e-05, LR: 1.353208e-04
+Epoch 80: Train Loss: 1.42858e-05, LR: 1.319378e-04
+Epoch 81: Train Loss: 1.18052e-05, LR: 1.286394e-04
+Epoch 82: Train Loss: 1.0354e-05, LR: 1.254234e-04
+Epoch 83: Train Loss: 1.33112e-05, LR: 1.222878e-04
+Epoch 84: Train Loss: 5.93094e-06, LR: 1.192306e-04
+Epoch 85: Train Loss: 8.67613e-06, LR: 1.162498e-04
+Epoch 86: Train Loss: 1.09358e-05, LR: 1.133436e-04
+Epoch 87: Train Loss: 7.09622e-06, LR: 1.105100e-04
+Epoch 88: Train Loss: 9.77894e-06, LR: 1.077472e-04
+Epoch 89: Train Loss: 7.32332e-06, LR: 1.050536e-04
+Epoch 90: Train Loss: 8.1479e-06, LR: 1.024272e-04
+Epoch 91: Train Loss: 7.02189e-06, LR: 9.986655e-05
+Epoch 92: Train Loss: 7.60879e-06, LR: 9.736988e-05
+Epoch 93: Train Loss: 6.81712e-06, LR: 9.493564e-05
+Epoch 94: Train Loss: 8.50179e-06, LR: 9.256224e-05
+Epoch 95: Train Loss: 4.84667e-06, LR: 9.024819e-05
+Epoch 96: Train Loss: 6.07387e-06, LR: 8.799198e-05
+Epoch 97: Train Loss: 7.50746e-06, LR: 8.579218e-05
+Epoch 98: Train Loss: 5.42014e-06, LR: 8.364738e-05
+Epoch 99: Train Loss: 6.51179e-06, LR: 8.155619e-05
+Epoch 100: Train Loss: 4.53405e-06, LR: 7.951729e-05
+  Val Loss: 1.5364e-06
+Model weights saved at epoch 100 to /glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/overfit/weights/h_2048_job11_e100.pth
+
+==================================================
+Computing singular values at epoch 100...
+==================================================
+Processed batch 49/49
+Collected hidden activations shape: torch.Size([49999, 2048])
+
+Singular values: [5012.989  2581.0435 2101.982  1907.517  1136.0142]...[2.69715711e-05 2.22760773e-05 1.18460885e-05 1.00162224e-05
+ 1.64086384e-06]
+Singular values saved to /glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/overfit/singular_values/h_2048_job11test_set_e100.pt
+
+==================================================
+Computing singular values at epoch 100...
+==================================================
+Processed batch 100/123
+Processed batch 123/123
+Collected hidden activations shape: torch.Size([124999, 2048])
+
+Singular values: [7104.3354 3572.4712 3038.5232 2862.1624 2757.7468]...[1.4772213e-05 1.1733497e-05 7.9416150e-06 4.5011070e-06 1.4056938e-06]
+Singular values saved to /glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/overfit/singular_values/h_2048_job11_e100.pt
+Singular Values saved at epoch 100 to /glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/overfit/singular_values/h_2048_job11_e100.pt
+
+Config and Metrics saved to '/glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/overfit/metrics/h_2048_job11.json'
+
+============================================================
+Training and singular value computation complete!
+============================================================
+Job ended at Mon Feb  9 11:56:20 PM MST 2026
+==================================================
+Total runtime: 0h 3m 58s
+Hidden dimension: 2048
+==================================================

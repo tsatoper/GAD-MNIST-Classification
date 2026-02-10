@@ -23,10 +23,10 @@ echo "Job index: $PBS_ARRAY_INDEX"
 echo "Hidden dim: $HIDDEN_DIM"
 
 #AR_MLP_deep
-#AR_MLP_one_layer
+#AR_MLP_1_layer
 python -u /glade/derecho/scratch/tsatoperry/GAD/KS_1d/pipeline.py \
     --job-idx $PBS_ARRAY_INDEX \
-    --model AR_MLP_one_layer \
+    --model AR_MLP_1_layer \
     --output-dir overfit \
     --train-data-path /glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/train_KS_1024.npy \
     --val-data-path /glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/val_KS_1024.npy \

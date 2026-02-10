@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch..amp import autocast
+from torch.amp import autocast
 import os
 import numpy as np
 from torch.utils.data import DataLoader, TensorDataset
@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader, TensorDataset
 # Models
 # ============================================================================
 
-class AR_MLP_one_layer(nn.Module):
+class AR_MLP_1_layer(nn.Module):
     """Single hidden layer MLP for autoregressive time stepping."""
     def __init__(self, input_dim=1024, hidden_dim=1024, output_dim=1024):
         super().__init__()
@@ -84,7 +84,7 @@ def train_ks(model, train_loader, loss_fn, optimizer, scheduler, device, epoch, 
         
         # Mixed precision training
         if scaler is not None:
-            with autocast():
+            with autocast(device_type="cuda"):
                 output = model(data)
                 predicted_next = data + output * dt
                 loss = loss_fn(predicted_next, target)
@@ -140,7 +140,7 @@ def train_ks_noEuler(model, train_loader, loss_fn, optimizer, scheduler, device,
         
         # Mixed precision training
         if scaler is not None:
-            with autocast():
+            with autocast(device_type="cuda"):
                 output = model(data)
                 loss = loss_fn(output, target)
             
