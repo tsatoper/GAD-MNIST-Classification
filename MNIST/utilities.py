@@ -2,6 +2,8 @@ import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, Subset
 
 class FCNN(nn.Module):
     def __init__(self, input_dim=784, hidden_dim=100, output_dim=10):
@@ -43,10 +45,11 @@ def train(model, train_loader, loss_fn, optimizer, scheduler, device, epoch, n_c
         correct += pred.eq(target.view_as(pred)).sum().item()
         total += target.size(0)
     scheduler.step()
+    lr = scheduler.get_last_lr()[0]
 
     avg_loss = total_loss / len(train_loader)
     accuracy = 100. * correct / total
-    print(f'Train Epoch {epoch}: Avg Loss: {avg_loss:.4f}, Accuracy: {correct}/{total} ({accuracy:.2f}%)')
+    print(f'Train Epoch {epoch}: Avg Loss: {avg_loss:.4f}, Accuracy: {correct}/{total} ({accuracy:.2f}%), LR = {lr:.6g}')
     return avg_loss, accuracy
 
 def test(model, test_loader, loss_fn, device, n_classes=10):
@@ -72,36 +75,100 @@ def test(model, test_loader, loss_fn, device, n_classes=10):
     print(f'\nTest set: Avg Loss: {test_loss:.4f}, Accuracy: {correct}/{len(test_loader.dataset)} '
           f'({accuracy:.2f}%)\n')
     return test_loss, accuracy
-
     
-def compute_and_save_singular_values(model, data_loader, device, filename, epoch, output_dir):
-    # Compute and save singular values of hidden layer activations (penultimate features).
+def save_hidden_activations(model, train_loader, test_loader, device, filename, epoch, output_dir):
+    # Save hidden layer activations (penultimate features) for train and test sets.
 
     print("\n" + "="*50)
-    print(f"Computing singular values at epoch {epoch}...")
+    print(f"Saving hidden activations at epoch {epoch}...")
     print("="*50)
     
     model.eval()
-    all_feats = []
 
-    with torch.no_grad():
-        for batch_idx, (data, _) in enumerate(data_loader, 1):
-            data = data.to(device)
-            _, feats = model(data, return_hidden=True)  # directly get features
-            all_feats.append(feats.cpu())
+    def collect_features(data_loader, split):
+        all_feats = []
+        with torch.no_grad():
+            for batch_idx, (data, _) in enumerate(data_loader, 1):
+                data = data.to(device)
+                _, feats = model(data, return_hidden=True)
+                all_feats.append(feats.cpu())
 
-            if batch_idx % 10 == 0 or batch_idx == len(data_loader):
-                print(f'Processed batch {batch_idx}/{len(data_loader)}')
+                if batch_idx % 10 == 0 or batch_idx == len(data_loader):
+                    print(f'[{split}] Processed batch {batch_idx}/{len(data_loader)}')
 
-    Phi = torch.cat(all_feats, dim=0)
-    print(f"Collected hidden activations shape: {Phi.shape}")
+        Phi = torch.cat(all_feats, dim=0)
+        print(f"[{split}] Collected hidden activations shape: {Phi.shape}")
+        return Phi
 
-    U, S, Vh = torch.linalg.svd(Phi, full_matrices=False)
-    print(f"\nSingular values: {S[:5].numpy()}...{S[-5:].numpy()}")
-        
+    train_feats = collect_features(train_loader, "train")
+    test_feats  = collect_features(test_loader,  "test")
+
+    acts_path = os.path.join(output_dir, 'activations', f'{filename}_e{epoch}.pt')
+    torch.save({'train': train_feats, 'test': test_feats}, acts_path)
+    print(f"Hidden activations saved to {acts_path}")
+
+    # Compute and save singular values for train and test feature matrices
+    print("\nComputing singular values...")
+    sv_dict = {}    
+    for split, feats in [("train", train_feats), ("test", test_feats)]:
+        S = torch.linalg.svdvals(feats)
+        sv_dict[split] = S
+        print(f"[{split}] Singular values shape: {S.shape}  |  top-5: {S[:5].tolist()}")
+
     sv_path = os.path.join(output_dir, 'singular_values', f'{filename}_e{epoch}.pt')
-
-    torch.save(S.cpu(), sv_path)
+    torch.save(sv_dict, sv_path)
     print(f"Singular values saved to {sv_path}")
+
+    return acts_path, sv_path
     
-    return S, sv_path
+def mnist_loader(
+    train=True,
+    n_samples=None,
+    batch_size=128,
+    root="/glade/derecho/scratch/tsatoperry/GAD/MNIST/data",
+    seed=0,
+    num_workers=0,
+    pin_memory=False,
+    shuffle=False,
+):
+    """
+    Regular MNIST DataLoader.
+
+    - Supports train / test split
+    - Optional uniform subsampling
+    - Deterministic via seed
+    """
+
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.1307,), (0.3081,)),
+    ])
+
+    dataset = datasets.MNIST(
+        root=root,
+        train=train,
+        download=True,
+        transform=transform
+    )
+
+    if n_samples is not None:
+        if n_samples > len(dataset):
+            raise ValueError(
+                f"Requested {n_samples} samples, but dataset has {len(dataset)}"
+            )
+
+        g = torch.Generator()
+        g.manual_seed(seed)
+
+        perm = torch.randperm(len(dataset), generator=g)
+        dataset = Subset(dataset, perm[:n_samples])
+
+    loader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=shuffle if n_samples is None else False,
+        num_workers=num_workers,
+        pin_memory=pin_memory
+    )
+
+    return loader

@@ -1,0 +1,332 @@
+{
+    "num_epochs": 2000,
+    "width": 1,
+    "batch_size": 2048,
+    "samples": 1000,
+    "num_parameters": 805,
+    "loss_function": "MSELoss()",
+    "learning_rate": 0.0001,
+    "gamma": 1.0,
+    "train_samples": 1000,
+    "test_samples": 10000,
+    "epoch50_train_loss": 0.6250759959220886,
+    "epoch50_test_loss": 0.6306901693344116,
+    "epoch50_train_acc": 9.7,
+    "epoch50_test_acc": 8.92,
+    "epoch50_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e50.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e50.pt"
+    ],
+    "epoch100_train_loss": 0.6183920502662659,
+    "epoch100_test_loss": 0.6239616751670838,
+    "epoch100_train_acc": 9.7,
+    "epoch100_test_acc": 8.92,
+    "epoch100_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e100.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e100.pt"
+    ],
+    "epoch150_train_loss": 0.6118683218955994,
+    "epoch150_test_loss": 0.6174121856689453,
+    "epoch150_train_acc": 9.7,
+    "epoch150_test_acc": 8.92,
+    "epoch150_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e150.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e150.pt"
+    ],
+    "epoch200_train_loss": 0.6054261326789856,
+    "epoch200_test_loss": 0.6109439015388489,
+    "epoch200_train_acc": 9.7,
+    "epoch200_test_acc": 8.92,
+    "epoch200_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e200.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e200.pt"
+    ],
+    "epoch250_train_loss": 0.5990570783615112,
+    "epoch250_test_loss": 0.6045521259307861,
+    "epoch250_train_acc": 9.7,
+    "epoch250_test_acc": 8.92,
+    "epoch250_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e250.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e250.pt"
+    ],
+    "epoch300_train_loss": 0.5927525162696838,
+    "epoch300_test_loss": 0.5982401847839356,
+    "epoch300_train_acc": 9.7,
+    "epoch300_test_acc": 8.92,
+    "epoch300_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e300.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e300.pt"
+    ],
+    "epoch350_train_loss": 0.586517870426178,
+    "epoch350_test_loss": 0.5919851064682007,
+    "epoch350_train_acc": 9.7,
+    "epoch350_test_acc": 8.92,
+    "epoch350_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e350.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e350.pt"
+    ],
+    "epoch400_train_loss": 0.5803487300872803,
+    "epoch400_test_loss": 0.5857972502708435,
+    "epoch400_train_acc": 9.7,
+    "epoch400_test_acc": 8.92,
+    "epoch400_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e400.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e400.pt"
+    ],
+    "epoch450_train_loss": 0.5742432475090027,
+    "epoch450_test_loss": 0.5796729445457458,
+    "epoch450_train_acc": 9.7,
+    "epoch450_test_acc": 8.92,
+    "epoch450_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e450.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e450.pt"
+    ],
+    "epoch500_train_loss": 0.5682003498077393,
+    "epoch500_test_loss": 0.573610520362854,
+    "epoch500_train_acc": 9.7,
+    "epoch500_test_acc": 8.92,
+    "epoch500_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e500.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e500.pt"
+    ],
+    "epoch550_train_loss": 0.5622187852859497,
+    "epoch550_test_loss": 0.5676090359687805,
+    "epoch550_train_acc": 9.7,
+    "epoch550_test_acc": 8.92,
+    "epoch550_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e550.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e550.pt"
+    ],
+    "epoch600_train_loss": 0.556298017501831,
+    "epoch600_test_loss": 0.5616676330566406,
+    "epoch600_train_acc": 9.7,
+    "epoch600_test_acc": 8.92,
+    "epoch600_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e600.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e600.pt"
+    ],
+    "epoch650_train_loss": 0.5504370331764221,
+    "epoch650_test_loss": 0.5557853698730468,
+    "epoch650_train_acc": 9.7,
+    "epoch650_test_acc": 8.92,
+    "epoch650_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e650.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e650.pt"
+    ],
+    "epoch700_train_loss": 0.5446351170539856,
+    "epoch700_test_loss": 0.5499616742134095,
+    "epoch700_train_acc": 9.7,
+    "epoch700_test_acc": 8.92,
+    "epoch700_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e700.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e700.pt"
+    ],
+    "epoch750_train_loss": 0.538891613483429,
+    "epoch750_test_loss": 0.5441947698593139,
+    "epoch750_train_acc": 9.7,
+    "epoch750_test_acc": 8.92,
+    "epoch750_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e750.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e750.pt"
+    ],
+    "epoch800_train_loss": 0.5332059264183044,
+    "epoch800_test_loss": 0.5384856343269349,
+    "epoch800_train_acc": 9.7,
+    "epoch800_test_acc": 8.92,
+    "epoch800_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e800.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e800.pt"
+    ],
+    "epoch850_train_loss": 0.5275776982307434,
+    "epoch850_test_loss": 0.5328330397605896,
+    "epoch850_train_acc": 9.7,
+    "epoch850_test_acc": 8.92,
+    "epoch850_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e850.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e850.pt"
+    ],
+    "epoch900_train_loss": 0.5220069289207458,
+    "epoch900_test_loss": 0.5272381663322449,
+    "epoch900_train_acc": 9.7,
+    "epoch900_test_acc": 8.92,
+    "epoch900_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e900.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e900.pt"
+    ],
+    "epoch950_train_loss": 0.5164895057678223,
+    "epoch950_test_loss": 0.521702790260315,
+    "epoch950_train_acc": 9.7,
+    "epoch950_test_acc": 8.92,
+    "epoch950_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e950.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e950.pt"
+    ],
+    "epoch1000_train_loss": 0.5110282301902771,
+    "epoch1000_test_loss": 0.5162158250808716,
+    "epoch1000_train_acc": 9.7,
+    "epoch1000_test_acc": 8.92,
+    "epoch1000_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1000.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1000.pt"
+    ],
+    "epoch1050_train_loss": 0.5056219696998596,
+    "epoch1050_test_loss": 0.510783052444458,
+    "epoch1050_train_acc": 9.7,
+    "epoch1050_test_acc": 8.92,
+    "epoch1050_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1050.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1050.pt"
+    ],
+    "epoch1100_train_loss": 0.5001985430717468,
+    "epoch1100_test_loss": 0.5054185628890991,
+    "epoch1100_train_acc": 9.7,
+    "epoch1100_test_acc": 8.92,
+    "epoch1100_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1100.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1100.pt"
+    ],
+    "epoch1150_train_loss": 0.4948582053184509,
+    "epoch1150_test_loss": 0.5000973582267761,
+    "epoch1150_train_acc": 9.7,
+    "epoch1150_test_acc": 8.92,
+    "epoch1150_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1150.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1150.pt"
+    ],
+    "epoch1200_train_loss": 0.4895646274089813,
+    "epoch1200_test_loss": 0.49480035305023196,
+    "epoch1200_train_acc": 9.7,
+    "epoch1200_test_acc": 8.92,
+    "epoch1200_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1200.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1200.pt"
+    ],
+    "epoch1250_train_loss": 0.484315425157547,
+    "epoch1250_test_loss": 0.4895537495613098,
+    "epoch1250_train_acc": 9.7,
+    "epoch1250_test_acc": 8.92,
+    "epoch1250_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1250.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1250.pt"
+    ],
+    "epoch1300_train_loss": 0.4791288375854492,
+    "epoch1300_test_loss": 0.48434109687805177,
+    "epoch1300_train_acc": 9.7,
+    "epoch1300_test_acc": 8.92,
+    "epoch1300_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1300.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1300.pt"
+    ],
+    "epoch1350_train_loss": 0.4739149212837219,
+    "epoch1350_test_loss": 0.47912546396255495,
+    "epoch1350_train_acc": 9.7,
+    "epoch1350_test_acc": 8.92,
+    "epoch1350_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1350.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1350.pt"
+    ],
+    "epoch1400_train_loss": 0.4684663414955139,
+    "epoch1400_test_loss": 0.47378424406051634,
+    "epoch1400_train_acc": 9.7,
+    "epoch1400_test_acc": 8.92,
+    "epoch1400_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1400.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1400.pt"
+    ],
+    "epoch1450_train_loss": 0.4614242911338806,
+    "epoch1450_test_loss": 0.4669790148735046,
+    "epoch1450_train_acc": 9.7,
+    "epoch1450_test_acc": 8.92,
+    "epoch1450_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1450.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1450.pt"
+    ],
+    "epoch1500_train_loss": 0.4544276297092438,
+    "epoch1500_test_loss": 0.46049689650535586,
+    "epoch1500_train_acc": 9.7,
+    "epoch1500_test_acc": 8.92,
+    "epoch1500_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1500.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1500.pt"
+    ],
+    "epoch1550_train_loss": 0.44699785113334656,
+    "epoch1550_test_loss": 0.4534233510494232,
+    "epoch1550_train_acc": 9.7,
+    "epoch1550_test_acc": 8.92,
+    "epoch1550_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1550.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1550.pt"
+    ],
+    "epoch1600_train_loss": 0.43918469548225403,
+    "epoch1600_test_loss": 0.4458575189113617,
+    "epoch1600_train_acc": 9.7,
+    "epoch1600_test_acc": 8.92,
+    "epoch1600_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1600.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1600.pt"
+    ],
+    "epoch1650_train_loss": 0.4314674139022827,
+    "epoch1650_test_loss": 0.43812649250030516,
+    "epoch1650_train_acc": 9.7,
+    "epoch1650_test_acc": 8.92,
+    "epoch1650_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1650.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1650.pt"
+    ],
+    "epoch1700_train_loss": 0.4233279824256897,
+    "epoch1700_test_loss": 0.43012630343437197,
+    "epoch1700_train_acc": 9.7,
+    "epoch1700_test_acc": 8.92,
+    "epoch1700_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1700.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1700.pt"
+    ],
+    "epoch1750_train_loss": 0.4153444170951843,
+    "epoch1750_test_loss": 0.42227532863616946,
+    "epoch1750_train_acc": 9.7,
+    "epoch1750_test_acc": 8.92,
+    "epoch1750_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1750.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1750.pt"
+    ],
+    "epoch1800_train_loss": 0.40742748975753784,
+    "epoch1800_test_loss": 0.41441254019737245,
+    "epoch1800_train_acc": 9.7,
+    "epoch1800_test_acc": 8.92,
+    "epoch1800_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1800.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1800.pt"
+    ],
+    "epoch1850_train_loss": 0.3998604118824005,
+    "epoch1850_test_loss": 0.4067881524562836,
+    "epoch1850_train_acc": 9.7,
+    "epoch1850_test_acc": 8.92,
+    "epoch1850_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1850.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1850.pt"
+    ],
+    "epoch1900_train_loss": 0.3924773335456848,
+    "epoch1900_test_loss": 0.39939584732055666,
+    "epoch1900_train_acc": 9.7,
+    "epoch1900_test_acc": 8.92,
+    "epoch1900_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1900.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1900.pt"
+    ],
+    "epoch1950_train_loss": 0.3853113353252411,
+    "epoch1950_test_loss": 0.39225963950157167,
+    "epoch1950_train_acc": 9.7,
+    "epoch1950_test_acc": 8.92,
+    "epoch1950_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e1950.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e1950.pt"
+    ],
+    "epoch2000_train_loss": 0.37846484780311584,
+    "epoch2000_test_loss": 0.3854567766189575,
+    "epoch2000_train_acc": 9.7,
+    "epoch2000_test_acc": 8.92,
+    "epoch2000_acts_path": [
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/activations/w1_job5192115_e2000.pt",
+        "/glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-4/singular_values/w1_job5192115_e2000.pt"
+    ]
+}

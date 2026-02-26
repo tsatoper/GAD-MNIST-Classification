@@ -1,9 +1,12 @@
 logs/
 .logs/
 dump/
+.dump/
 *.pth
 *output*
 .tinyimagenet
 data/
 training_data/
+activations/
+singular_values/
 __pycache__/

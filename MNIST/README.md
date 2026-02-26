@@ -20,4 +20,5 @@ recreate Ugly curve with MNIST
 Running test svd for epoch 2000 1-30 width
 use plot ugly on them
 
+
 run the same model on same width to do svs vs loss

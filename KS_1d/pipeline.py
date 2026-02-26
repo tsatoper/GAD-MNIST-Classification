@@ -17,6 +17,7 @@ parser.add_argument('--train-data-path', type=str, default='/glade/derecho/scrat
 parser.add_argument('--val-data-path', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/val_KS_1024.npy')
 parser.add_argument('--hidden-dim', type=int, default=1024, help='Hidden layer dimension')
 parser.add_argument('--epochs', type=int, default=100, help='Number of training epochs')
+parser.add_argument('--n-samples', type=int, default=None, help='Number of training samples to use (None = use all)')
 args = parser.parse_args()
 
 
@@ -41,7 +42,8 @@ train_loader, val_loader, input_dim, n_train, n_val = load_ks_data(
     args.train_data_path,
     args.val_data_path,
     batch_size=batch_size,
-    num_workers=4
+    num_workers=4,
+    n_samples=args.n_samples
 )
 
 # Initialize model
@@ -50,7 +52,8 @@ if args.model == 'AR_MLP_1_layer':
 elif args.model == 'AR_MLP_deep':
     model = AR_MLP_deep(hidden_dim=args.hidden_dim).to(device)
 else:
-    raise ValueError(f"Unknown model: {args.model}")
+   model = AR_MLP_deep(hidden_dim=args.hidden_dim).to(device)
+   print(f"Unknown model: {args.model} ... Switching to Deep")
 
 # Setup training
 loss_fn = nn.MSELoss()
@@ -77,6 +80,7 @@ print(f"Learning rate: {learning_rate}")
 print(f"Time step (dt): {dt}")
 print(f"Training samples: {n_train}")
 print(f"Validation samples: {n_val}")
+print(f"Training samples (requested): {args.n_samples if args.n_samples else 'all'}")
 print(f"Device: {device}")
 print(f"Loss function: {loss_fn}")
 print(f"Optimizer: AdamW")
@@ -106,13 +110,15 @@ json_input = {
     'train_samples': n_train,
     'val_samples': n_val,
     'job_idx': args.job_idx,
-    'mixed_precision': scaler is not None
+    'mixed_precision': scaler is not None,
+    'n_samples_requested': args.n_samples,
+    'train_samples': n_train,
 }
 
 # Training loop
 for epoch in range(1, num_epochs + 1):
     # Train
-    train_loss = train_ks_noEuler(
+    train_loss = train_ks(
         model, train_loader, loss_fn, optimizer, scheduler,
         device, epoch, dt=dt, scaler=scaler
     )

@@ -15,31 +15,35 @@ from torchvision.utils import save_image
 from torch.utils.data import DataLoader
 from torch.utils.data import Subset
 
-from utilities import FCNN, train, test, compute_and_save_singular_values
+from utilities import FCNN, train, test, save_hidden_activations, mnist_loader
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--array-idx', type=int, default=0)
 parser.add_argument('--job-num', type=str, default='__nojob__')
 parser.add_argument('--output-dir', type=str, default='./default')
 parser.add_argument('--learning-rate', type=float, default=1e-3)
+parser.add_argument('--n-samples', type=int, default=None, help='Number of training samples to use (None = use all)')
+parser.add_argument('--epochs', type=int, default=100)
+parser.add_argument('--gamma', type=float, default=1.0)
+
+
+
 args = parser.parse_args()
-
-
-width = args.array_idx % 30 + 31 #128 = 2^7 2^13 #2**args.array_idx 
+width = 2**args.array_idx 
 filename = f"w{width}_job{args.job_num[:7]}"
-num_epochs = 2000
-save_at_this_epoch = [1, 500, 2000]
-samples = 4000
-
-
-batch_size = 2048
+num_epochs = args.epochs
+samples = args.n_samples if args.n_samples is not None else 60000
 learning_rate = args.learning_rate
+
+
+save_at_this_epoch = list(range(50, num_epochs + 1, 50))
+batch_size = 2048
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_fn = nn.MSELoss()
 
 model = FCNN(hidden_dim=width).to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
-scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=1)
+scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=args.gamma)
 
 print(f"Running with width = {width}")
 print(f"Running with {samples} training samples")
@@ -66,25 +70,32 @@ json_input = {
     'samples': samples,
     'num_parameters': num_parameters,
     'loss_function': str(loss_fn),
-    'learning_rate': learning_rate
+    'learning_rate': learning_rate,
+    'gamma': args.gamma
 }
 
-transform = transforms.Compose([
-    transforms.ToTensor(),  # Convert images to PyTorch tensors
-    transforms.Normalize((0.1307,), (0.3081,))   # standard MNIST normalization
-])
-train_dataset_full = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
-train_dataset = Subset(train_dataset_full, range(samples))
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-
-test_dataset_full = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
-test_loader = DataLoader(test_dataset_full, batch_size=batch_size, shuffle=False)
+train_loader = mnist_loader(
+    train=True,
+    n_samples=samples,
+    batch_size=batch_size,
+    shuffle=True,
+    num_workers=4,
+)
+test_loader = mnist_loader(
+    train=False,
+    batch_size=batch_size,
+    shuffle=False,
+)
+json_input['train_samples'] = len(train_loader.dataset)
+json_input['test_samples'] = len(test_loader.dataset)
 
 # SAVING
 os.makedirs(args.output_dir, exist_ok=True)
 os.makedirs(os.path.join(args.output_dir, 'metrics'), exist_ok=True)
 os.makedirs(os.path.join(args.output_dir, 'weights'), exist_ok=True)
+os.makedirs(os.path.join(args.output_dir, 'activations'), exist_ok=True)
 os.makedirs(os.path.join(args.output_dir, 'singular_values'), exist_ok=True)
+
 
 
 # TRAINING
@@ -94,23 +105,18 @@ for epoch in range(1, num_epochs + 1):
     if epoch in save_at_this_epoch:
         test_loss, test_acc = test(model, test_loader, loss_fn, device)
 
-        json_input[f'epoch{epoch}_train_loss'] = train_loss
-        json_input[f'epoch{epoch}_test_loss'] = test_loss
-        json_input[f'epoch{epoch}_train_acc'] = train_acc
-        json_input[f'epoch{epoch}_test_acc'] = test_acc
+        json_input[f'epoch{epoch}_train_loss'] = float(train_loss)
+        json_input[f'epoch{epoch}_test_loss']  = float(test_loss)
+        json_input[f'epoch{epoch}_train_acc']  = float(train_acc)
+        json_input[f'epoch{epoch}_test_acc']   = float(test_acc)
         
         # Save model weights
         torch.save(model.state_dict(), f'{args.output_dir}/weights/{filename}_e{epoch}.pth')
         print(f"Model weights saved at epoch {epoch} to {args.output_dir}/weights/{filename}_e{epoch}.pth")
         
-        # Compute and save singular values
-        S, sv_path = compute_and_save_singular_values(model, test_loader, device, filename+'test', epoch, args.output_dir)
-        S, sv_path = compute_and_save_singular_values(model, train_loader, device, filename, epoch, args.output_dir)
-        print(f"Singular Values saved at epoch {epoch} to {sv_path}")
+        acts_path = save_hidden_activations(model, train_loader, test_loader, device, filename, epoch, args.output_dir)
 
-        json_input[f'epoch{epoch}_sv_max'] = float(S[0].cpu())
-        json_input[f'epoch{epoch}_sv_min'] = float(S[-1].cpu())
-        json_input[f'epoch{epoch}_sv_path'] = sv_path
+        json_input[f'epoch{epoch}_acts_path'] = acts_path
     
 
 with open(f'{args.output_dir}/metrics/{filename}.json', 'w') as f:

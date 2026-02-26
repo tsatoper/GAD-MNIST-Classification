@@ -258,8 +258,7 @@ def compute_and_save_singular_values(model, data_loader, device, model_name, epo
 # ============================================================================
 # Data Loading
 # ============================================================================
-
-def load_ks_data(train_data_path, val_data_path, batch_size=256, num_workers=4):
+def load_ks_data(train_data_path, val_data_path, batch_size=256, num_workers=4, n_samples=None):
     """
     Load KS training and validation data and create DataLoaders.
     
@@ -268,6 +267,8 @@ def load_ks_data(train_data_path, val_data_path, batch_size=256, num_workers=4):
         val_data_path: Path to validation data .npy file (timesteps, spatial_dim)
         batch_size: Batch size for DataLoaders
         num_workers: Number of workers for data loading
+        n_samples: Number of training samples to use (None = use all). 
+                   Samples are drawn randomly without replacement.
     
     Returns:
         train_loader: DataLoader for training data
@@ -291,6 +292,17 @@ def load_ks_data(train_data_path, val_data_path, batch_size=256, num_workers=4):
 
     X_val = val_data[:-1]
     y_val = val_data[1:]
+
+    # Subsample training data if n_samples is specified
+    if n_samples is not None:
+        if n_samples > len(X_train):
+            print(f"n_samples ({n_samples}) exceeds available training samples ({len(X_train)}) ... Reducing to {len(X_train)}")
+            n_samples = len(X_train)
+
+        indices = np.random.choice(len(X_train), size=n_samples, replace=False)
+        X_train = X_train[indices]
+        y_train = y_train[indices]
+        print(f"Subsampled to {n_samples} training samples (from {train_data.shape[0]-1} available)")
 
     print(f"Training samples: {X_train.shape[0]}, Validation samples: {X_val.shape[0]}")
 

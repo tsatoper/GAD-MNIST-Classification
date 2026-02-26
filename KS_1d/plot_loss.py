@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 
-plot_id = 'overfit'
-dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/KS_1d/1_layer/{plot_id}/metrics/'
+plot_id = 'N4'
+dir_name = f'/glade/derecho/scratch/tsatoperry/GAD/KS_1d/deep/{plot_id}/metrics/'
 yscale = 'linear'
 epochs = [100]
 

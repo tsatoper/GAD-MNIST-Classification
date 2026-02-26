@@ -3,13 +3,13 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-plot_id = 'ddtrueN2' 
+plot_id = 'N3_1e-3' 
 
 dir_name = f'./models/{plot_id}/metrics'
 # Define epochs to plot
-epochs = [500, 2000]
+epochs = [50, 100, 1000, 2000]
 yscale = 'linear'
-xscale = 'linear'
+xscale = 'log'
 save_path = f'loss_{plot_id}_{yscale}.png'
 
 
@@ -81,12 +81,11 @@ else:
             plt.scatter(width, test_losses, s=40, alpha=0.8, 
                        zorder=5, color=colors[idx])
             
-            # Plot train losses
-            # plt.plot(width, train_losses, linestyle='--', 
-            #         linewidth=2, label=f'Epoch {epoch} - Train Loss', 
-            #         alpha=0.6, color=colors[idx])
-            # plt.scatter(width, train_losses, s=40, alpha=0.6, 
-            #            zorder=5, color=colors[idx])
+            plt.plot(width, train_losses, linestyle='--', 
+                    linewidth=2, label=f'Epoch {epoch} - Train Loss', 
+                    alpha=0.6, color=colors[idx])
+            plt.scatter(width, train_losses, s=40, alpha=0.6, 
+                       zorder=5, color=colors[idx])
 
     # Formatting
     plt.xlabel('Model Width', fontsize=13)
