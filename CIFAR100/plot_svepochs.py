@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib.lines import Line2D
 
 # ── Config ────────────────────────────────────────────────────────────────────
-model_dir = 'n_10000'
+model_dir = 'n_50000'
 epochs    = [1, 50, 200]
 directory = f'/glade/derecho/scratch/tsatoperry/GAD/CIFAR100/models/{model_dir}/depth28/singular_values/'
 filename  = f'sv_epochs_{model_dir}.png'
@@ -75,7 +75,7 @@ for ax, epoch in zip(axes, epochs):
 
     ax.set_title(f"Epoch {epoch}", fontsize=11)
     ax.set_xlabel("Index")
-    ax.set_yscale("log")
+    ax.set_yscale("linear")
     ax.grid(True, alpha=0.3, which="both")
 
 axes[0].set_ylabel("Singular Value")

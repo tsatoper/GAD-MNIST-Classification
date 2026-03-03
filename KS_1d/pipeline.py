@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 from torch.amp import autocast, GradScaler
 
-from utilities import AR_MLP_1_layer, AR_MLP_deep, compute_and_save_singular_values, load_ks_data, train_ks, test_ks, train_ks_noEuler
+from utilities import AR_MLP_1_layer, AR_MLP_deep, save_hidden_activations, load_ks_data, train_ks, test_ks
 
 # Argument parsing
 parser = argparse.ArgumentParser()
@@ -14,7 +14,7 @@ parser.add_argument('--job-idx', type=int, required=True)
 parser.add_argument('--model', type=str, default='AR_MLP_1_layer', choices=['AR_MLP_1_layer', 'AR_MLP_deep'])
 parser.add_argument('--output-dir', type=str, default='default')
 parser.add_argument('--train-data-path', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/train_KS_1024.npy')
-parser.add_argument('--val-data-path', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/val_KS_1024.npy')
+parser.add_argument('--test-data-path', type=str, default='/glade/derecho/scratch/tsatoperry/GAD/KS_1d/training_data/test_KS_1024.npy')
 parser.add_argument('--hidden-dim', type=int, default=1024, help='Hidden layer dimension')
 parser.add_argument('--epochs', type=int, default=100, help='Number of training epochs')
 parser.add_argument('--n-samples', type=int, default=None, help='Number of training samples to use (None = use all)')
@@ -29,18 +29,19 @@ args.output_dir = os.path.join(
 )
 model_name = f'h_{args.hidden_dim}_job{args.job_idx}'
 print('Training model: ', model_name)
+
 # Configuration
 num_epochs = args.epochs
 batch_size = 1024
 learning_rate = 1e-3
 dt = 1e-3
-save_interval = 50
+save_at_this_epoch = list(range(50, num_epochs + 1, 50))
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Load data
-train_loader, val_loader, input_dim, n_train, n_val = load_ks_data(
+train_loader, test_loader, input_dim, n_train, n_test = load_ks_data(
     args.train_data_path,
-    args.val_data_path,
+    args.test_data_path,
     batch_size=batch_size,
     num_workers=4,
     n_samples=args.n_samples
@@ -52,8 +53,8 @@ if args.model == 'AR_MLP_1_layer':
 elif args.model == 'AR_MLP_deep':
     model = AR_MLP_deep(hidden_dim=args.hidden_dim).to(device)
 else:
-   model = AR_MLP_deep(hidden_dim=args.hidden_dim).to(device)
-   print(f"Unknown model: {args.model} ... Switching to Deep")
+    model = AR_MLP_deep(hidden_dim=args.hidden_dim).to(device)
+    print(f"Unknown model: {args.model} ... Switching to Deep")
 
 # Setup training
 loss_fn = nn.MSELoss()
@@ -79,7 +80,7 @@ print(f"Batch size: {batch_size}")
 print(f"Learning rate: {learning_rate}")
 print(f"Time step (dt): {dt}")
 print(f"Training samples: {n_train}")
-print(f"Validation samples: {n_val}")
+print(f"Testing samples: {n_test}")
 print(f"Training samples (requested): {args.n_samples if args.n_samples else 'all'}")
 print(f"Device: {device}")
 print(f"Loss function: {loss_fn}")
@@ -87,14 +88,15 @@ print(f"Optimizer: AdamW")
 print(f"Scheduler: ExponentialLR (gamma=0.975)")
 print(f"Mixed precision: {'Enabled' if scaler else 'Disabled'}")
 print(f"Total epochs: {num_epochs}")
-print(f"Save interval: {save_interval} epochs")
+print(f"Save at epochs: {save_at_this_epoch}")
 print("="*60)
 
 # Output directories
 os.makedirs(args.output_dir, exist_ok=True)
-os.makedirs(os.path.join(args.output_dir, 'metrics'), exist_ok=True)
-os.makedirs(os.path.join(args.output_dir, 'weights'), exist_ok=True)
-os.makedirs(os.path.join(args.output_dir, 'singular_values'), exist_ok=True)
+os.makedirs(os.path.join(args.output_dir, 'metrics'),          exist_ok=True)
+os.makedirs(os.path.join(args.output_dir, 'weights'),          exist_ok=True)
+os.makedirs(os.path.join(args.output_dir, 'activations'),      exist_ok=True)
+os.makedirs(os.path.join(args.output_dir, 'singular_values'),  exist_ok=True)
 
 # Initialize metrics storage
 json_input = {
@@ -108,47 +110,40 @@ json_input = {
     'learning_rate': learning_rate,
     'dt': dt,
     'train_samples': n_train,
-    'val_samples': n_val,
+    'test_samples': n_test,
     'job_idx': args.job_idx,
     'mixed_precision': scaler is not None,
     'n_samples_requested': args.n_samples,
-    'train_samples': n_train,
 }
 
 # Training loop
 for epoch in range(1, num_epochs + 1):
-    # Train
     train_loss = train_ks(
         model, train_loader, loss_fn, optimizer, scheduler,
         device, epoch, dt=dt, scaler=scaler
     )
-    
-    json_input[f'epoch{epoch}_train_loss'] = train_loss
 
-    # Validate and save checkpoints
-    if epoch % save_interval == 0 or epoch == num_epochs:
-        # Validation
-        val_loss = test_ks(model, val_loader, loss_fn, device, dt=dt)
-        json_input[f'epoch{epoch}_val_loss'] = val_loss
+    if epoch in save_at_this_epoch:
+        test_loss = test_ks(model, test_loader, loss_fn, device, dt=dt)
+
+        json_input[f'epoch{epoch}_train_loss'] = float(train_loss)
+        json_input[f'epoch{epoch}_test_loss']   = float(test_loss)
+        json_input[f'epoch{epoch}_learning_rate'] = optimizer.param_groups[0]['lr']
 
         # Save weights
-        weight_path = f'{args.output_dir}/weights/{model_name}_e{epoch}.pth'
+        weight_path = os.path.join(args.output_dir, 'weights', f'{model_name}_e{epoch}.pth')
         torch.save(model.state_dict(), weight_path)
         print(f"Model weights saved at epoch {epoch} to {weight_path}")
 
-        # Compute and save singular values
-        S, sv_path = compute_and_save_singular_values(
-            model, val_loader, device, model_name+'test_set', epoch, args.output_dir
+        # Save activations and singular values for both train and val
+        acts_path, sv_path, sv_mean_train, sv_mean_test = save_hidden_activations(
+            model, train_loader, test_loader, device, model_name, epoch, args.output_dir
         )
-        S, sv_path = compute_and_save_singular_values(
-            model, train_loader, device, model_name, epoch, args.output_dir
-        )
-        print(f"Singular Values saved at epoch {epoch} to {sv_path}")
-        
-        json_input[f'epoch{epoch}_sv_max'] = float(S[0].cpu())
-        json_input[f'epoch{epoch}_sv_min'] = float(S[-1].cpu())
-        json_input[f'epoch{epoch}_sv_path'] = sv_path
-        json_input[f'epoch{epoch}_learning_rate'] = optimizer.param_groups[0]['lr']
+
+        json_input[f'epoch{epoch}_acts_path'] = acts_path
+        json_input[f'epoch{epoch}_sv_path']   = sv_path
+        json_input[f'epoch{epoch}_sv_mean_train'] = sv_mean_train
+        json_input[f'epoch{epoch}_sv_mean_test']   = sv_mean_test
 
 # Save metrics
 with open(f'{args.output_dir}/metrics/{model_name}.json', 'w') as f:

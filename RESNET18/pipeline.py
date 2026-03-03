@@ -14,9 +14,11 @@ import torchvision.transforms as transforms
 from torchvision.utils import save_image
 from torch.utils.data import DataLoader
 from torch.utils.data import Subset
+import sys
+sys.path.append('/glade/derecho/scratch/tsatoperry/GAD/MNIST')
+from utilities import train, test, save_hidden_activations
 
-from utilities import FCNN, train, test, save_hidden_activations, mnist_loader
-
+from ResNet import make_resnet18k, cifar10_loader
 parser = argparse.ArgumentParser()
 parser.add_argument('--array-idx', type=int, default=0)
 parser.add_argument('--job-num', type=str, default='__nojob__')
@@ -28,9 +30,8 @@ parser.add_argument('--gamma', type=float, default=1.0)
 parser.add_argument('--noise', type=float, default=0.0)
 
 
-
 args = parser.parse_args()
-width = [5*i for i in range(1, 21)][args.array_idx]
+width = [i for i in range(1, 8+1)][args.array_idx]
 filename = f"w{width}_job{args.job_num[:7]}"
 num_epochs = args.epochs
 samples = args.n_samples if args.n_samples is not None else 60000
@@ -38,11 +39,11 @@ learning_rate = args.learning_rate
 
 
 save_at_this_epoch = list(range(50, num_epochs + 1, 50))
-batch_size = 2048
+batch_size = 512
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_fn = nn.MSELoss()
 
-model = FCNN(hidden_dim=width).to(device)
+model = make_resnet18k(k=width, num_classes=10).to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=args.gamma)
 
@@ -76,16 +77,16 @@ json_input = {
     'noise': args.noise
 }
 
-train_loader = mnist_loader(
+train_loader = cifar10_loader(
     train=True,
     n_samples=samples,
     batch_size=batch_size,
     shuffle=True,
     num_workers=4,
-    noise = 0,
+    noise = args.noise,
 
 )
-test_loader = mnist_loader(
+test_loader = cifar10_loader(
     train=False,
     batch_size=batch_size,
     shuffle=False,

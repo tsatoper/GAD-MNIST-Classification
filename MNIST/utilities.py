@@ -15,16 +15,12 @@ class FCNN(nn.Module):
         x = x.view(x.size(0), -1)  # Flatten (N, 1, 28, 28) → (N, 784)
         x = self.fc1(x)
         hidden = F.relu(x)
-
+        out = self.fc2(hidden)
         if return_hidden:
-            return self.fc2(hidden), hidden
+            return out, hidden
 
-        return self.fc2(hidden)
-
- import torch
-from torch.utils.data import DataLoader, Subset
-from torchvision import datasets, transforms
-
+        return out
+        
 def mnist_loader(
     train=True,
     n_samples=None,
@@ -203,5 +199,5 @@ def save_hidden_activations(model, train_loader, test_loader, device, filename, 
     torch.save(sv_dict, sv_path)
     print(f"Singular values saved to {sv_path}")
 
-    return sv_mean
+    return acts_path, sv_path, sv_mean
    
