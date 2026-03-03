@@ -21,6 +21,88 @@ class FCNN(nn.Module):
 
         return self.fc2(hidden)
 
+ import torch
+from torch.utils.data import DataLoader, Subset
+from torchvision import datasets, transforms
+
+def mnist_loader(
+    train=True,
+    n_samples=None,
+    batch_size=128,
+    root="/glade/derecho/scratch/tsatoperry/GAD/MNIST/data",
+    seed=0,
+    num_workers=0,
+    pin_memory=False,
+    shuffle=False,
+    noise=0.0,  # fraction of labels to corrupt
+):
+    if not (0.0 <= noise <= 1.0):
+        raise ValueError("noise must be in [0,1]")
+
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.1307,), (0.3081,))
+    ])
+
+    dataset = datasets.MNIST(
+        root=root,
+        train=train,
+        download=True,
+        transform=transform
+    )
+
+    # --- Deterministic label corruption ---
+    if noise > 0.0:
+        g = torch.Generator()
+        g.manual_seed(0)
+
+        targets = torch.tensor(dataset.targets)
+        N = len(targets)
+        n_corrupt = int(noise * N)
+
+        perm = torch.randperm(N, generator=g)
+        corrupt_idx = perm[:n_corrupt]
+
+        num_classes = 10
+
+        for idx in corrupt_idx:
+            original = targets[idx].item()
+            new_label = torch.randint(
+                0, num_classes - 1, (1,), generator=g
+            ).item()
+
+            # ensure different class
+            if new_label >= original:
+                new_label += 1
+
+            targets[idx] = new_label
+
+        dataset.targets = targets.tolist()
+
+    # --- Optional subsampling ---
+    if n_samples is not None:
+        if n_samples > len(dataset):
+            raise ValueError(
+                f"Requested {n_samples} samples, but dataset has {len(dataset)}"
+            )
+
+        g = torch.Generator()
+        g.manual_seed(seed)
+
+        perm = torch.randperm(len(dataset), generator=g)
+        dataset = Subset(dataset, perm[:n_samples])
+
+    loader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=shuffle if n_samples is None else False,
+        num_workers=num_workers,
+        pin_memory=pin_memory
+    )
+
+    return loader
+
+
 def train(model, train_loader, loss_fn, optimizer, scheduler, device, epoch, n_classes=10):
     model.train()
     total_loss = 0
@@ -109,66 +191,17 @@ def save_hidden_activations(model, train_loader, test_loader, device, filename, 
 
     # Compute and save singular values for train and test feature matrices
     print("\nComputing singular values...")
-    sv_dict = {}    
+    sv_dict = {} 
+    sv_mean = {}   
     for split, feats in [("train", train_feats), ("test", test_feats)]:
         S = torch.linalg.svdvals(feats)
         sv_dict[split] = S
-        print(f"[{split}] Singular values shape: {S.shape}  |  top-5: {S[:5].tolist()}")
+        sv_mean[split] = S.mean()
+        print(f"[{split}] Singular values shape: {S.shape}  |  bot 5: {S[-5:].tolist()}")
 
     sv_path = os.path.join(output_dir, 'singular_values', f'{filename}_e{epoch}.pt')
     torch.save(sv_dict, sv_path)
     print(f"Singular values saved to {sv_path}")
 
-    return acts_path, sv_path
-    
-def mnist_loader(
-    train=True,
-    n_samples=None,
-    batch_size=128,
-    root="/glade/derecho/scratch/tsatoperry/GAD/MNIST/data",
-    seed=0,
-    num_workers=0,
-    pin_memory=False,
-    shuffle=False,
-):
-    """
-    Regular MNIST DataLoader.
-
-    - Supports train / test split
-    - Optional uniform subsampling
-    - Deterministic via seed
-    """
-
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.1307,), (0.3081,)),
-    ])
-
-    dataset = datasets.MNIST(
-        root=root,
-        train=train,
-        download=True,
-        transform=transform
-    )
-
-    if n_samples is not None:
-        if n_samples > len(dataset):
-            raise ValueError(
-                f"Requested {n_samples} samples, but dataset has {len(dataset)}"
-            )
-
-        g = torch.Generator()
-        g.manual_seed(seed)
-
-        perm = torch.randperm(len(dataset), generator=g)
-        dataset = Subset(dataset, perm[:n_samples])
-
-    loader = DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=shuffle if n_samples is None else False,
-        num_workers=num_workers,
-        pin_memory=pin_memory
-    )
-
-    return loader
+    return sv_mean
+   

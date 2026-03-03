@@ -10,18 +10,19 @@ import numpy as np
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 
-TARGET_WIDTHS = [128, 256, 512, 1024, 2048, 4096, 8192]
+TARGET_WIDTHS = [100]
 epochs        = [100 * i for i in range(1, 20)]
 xscale        = 'log'
 yscale        = 'linear'
 
 PLOT_IDS = [
-    'N1_1e-3',
-    'N1_1e-4',
-    'N2_1e-3',
-    'N2_1e-4',
-    'N3_1e-3',
-    'N3_1e-4'
+    # 'N1_1e-3',
+    # 'N1_1e-4',
+    # 'N2_1e-3',
+    # 'N2_1e-4',
+    # 'N3_1e-3',
+    # 'N3_1e-4'
+    'testing'
 ]
 
 BASE_ROOT = '/glade/derecho/scratch/tsatoperry/GAD/MNIST/models'
@@ -126,7 +127,7 @@ for target_width, plot_id, job_id, epoch_losses, act_sv in panels:
 
 # ── Build figure ─────────────────────────────────────────────────────────────
 
-ncols = 3
+ncols = 2
 nrows = max((len(panels) + ncols - 1) // ncols, 1)
 
 fig, axes = plt.subplots(nrows, ncols, figsize=(7 * ncols, 5 * nrows), squeeze=False)

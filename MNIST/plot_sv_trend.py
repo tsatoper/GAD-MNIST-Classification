@@ -14,18 +14,18 @@ PLOT_IDS = [
     'N3_1e-4'
 ]
 
-epoch    = 550
+epoch    = 2000
 base_dir = '/glade/derecho/scratch/tsatoperry/GAD/MNIST/models'
 filename = 'sv_trend_mnist.png'
 
 # ===== Grid layout: one subplot per model =====
 n_models = len(PLOT_IDS)
-fig, axes = plt.subplots(1, n_models, figsize=(5 * n_models, 5))
+fig, axes = plt.subplots(3, 2, figsize=(14, 5*n_models/2))
 if n_models == 1:
     axes = [axes]
 
 for col, model_dir in enumerate(PLOT_IDS):
-    ax = axes[col]
+    ax = axes[col//2, col%2]
     directory = f'{base_dir}/{model_dir}/singular_values/'
 
     # ===== Load SV Data =====
@@ -79,11 +79,18 @@ for col, model_dir in enumerate(PLOT_IDS):
         ax.plot(indices, sv, '--', color=color, alpha=0.7)
         ax.plot(indices[-1], sv.mean(), 's', color=color, markersize=7,
                 markeredgecolor='black', markeredgewidth=0.5)
-
+    
     ax.set_title(f"MNIST — {model_dir}", fontsize=11)
+    if col//2 == 0:
+        ax.set_title(f"MNIST — {model_dir} | n_training < n_testing", fontsize=11)
+    if col//2 == 1:
+        ax.set_title(f"MNIST — {model_dir} | n_training = n_testing", fontsize=11)
+    if col//2 == 2:
+        ax.set_title(f"MNIST — {model_dir} | n_training > n_testing", fontsize=11)
     ax.set_xlabel("Index")
     ax.set_ylabel("Singular Value")
     ax.set_yscale("log")
+    ax.set_xscale("log")
     ax.grid(True, alpha=0.3, which="both")
 
     # Legend on first subplot only

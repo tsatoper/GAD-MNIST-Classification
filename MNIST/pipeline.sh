@@ -1,12 +1,12 @@
 #!/bin/bash
 #PBS -A UCSC0009
-#PBS -N o_mnist_N1
+#PBS -N o_mnist
 #PBS -q main           
-#PBS -l select=1:ncpus=4:ngpus=1:mem=8GB
+#PBS -l select=1:ncpus=4:ngpus=1:mem=2GB
 #PBS -l walltime=11:59:00
 #PBS -j oe
-# qsub -J 0-14 pipelineN1.sh
-# qsub -v PBS_ARRAY_INDEX=5 pipelineN1.sh
+# qsub -J 0-19 pipeline.sh
+# qsub -v PBS_ARRAY_INDEX=5 pipeline.sh
 
 
 module load conda  
@@ -18,11 +18,12 @@ echo "Job started at $(date)"
 python -u /glade/derecho/scratch/tsatoperry/GAD/MNIST/pipeline.py \
     --array-idx $PBS_ARRAY_INDEX \
     --job-num $PBS_JOBID \
-    --output-dir /glade/derecho/scratch/tsatoperry/GAD/MNIST/models/N1_1e-3 \
-    --learning-rate 0.001 \
-    --n-samples 1000 \
+    --output-dir /glade/derecho/scratch/tsatoperry/GAD/MNIST/models/testing \
+    --learning-rate 0.0001 \
+    --n-samples 4000 \
     --gamma 1.0 \
-    --epochs 2000
+    --epochs 2000 \
+    --noise 0.15
 
 
 # N1 = 1000
