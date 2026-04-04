@@ -13,11 +13,9 @@ class PreActBlock(nn.Module):
     def __init__(self, in_planes, planes, stride=1, **kwargs):
         super(PreActBlock, self).__init__()
         self.bn1 = nn.BatchNorm2d(in_planes)
-        self.conv1 = nn.Conv2d(
-            in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3,
-                               stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
 
         if stride != 1 or in_planes != self.expansion*planes:
             self.shortcut = nn.Sequential(
@@ -39,8 +37,7 @@ class PreActResNet(nn.Module):
         self.in_planes = init_channels
         c = init_channels
 
-        self.conv1 = nn.Conv2d(3, c, kernel_size=3,
-                               stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(3, c, kernel_size=3, stride=1, padding=1, bias=False)
         self.layer1 = self._make_layer(block, c, num_blocks[0], stride=1)
         self.layer2 = self._make_layer(block, 2*c, num_blocks[1], stride=2)
         self.layer3 = self._make_layer(block, 4*c, num_blocks[2], stride=2)
@@ -73,6 +70,10 @@ def make_resnet18k(k=64, num_classes=10) -> PreActResNet:
     ''' Returns a ResNet18 with width parameter k. (k=64 is standard ResNet18)'''
     return PreActResNet(PreActBlock, [2, 2, 2, 2], num_classes=num_classes, init_channels=k)
 
+import torch
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, Subset
+
 
 def cifar10_loader(
     train=True,
@@ -88,13 +89,24 @@ def cifar10_loader(
     if not (0.0 <= noise <= 1.0):
         raise ValueError("noise must be in [0,1]")
 
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(
-            mean=(0.4914, 0.4822, 0.4465),
-            std=(0.2470, 0.2435, 0.2616)
-        )
-    ])
+    normalize = transforms.Normalize(
+        mean=(0.4914, 0.4822, 0.4465),
+        std=(0.2470, 0.2435, 0.2616)
+    )
+
+    # FIX: separate train/test transforms — augment only during training
+    if train:
+        transform = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            normalize,
+        ])
+    else:
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            normalize,
+        ])
 
     dataset = datasets.CIFAR10(
         root=root,
@@ -113,7 +125,7 @@ def cifar10_loader(
         n_corrupt = int(noise * N)
 
         perm = torch.randperm(N, generator=g)
-        corrupt_idx = perm[:n_corrupt]
+        corrupt_idx = perm[:n_corrupt].tolist()  # FIX: convert to plain ints
 
         num_classes = 10
 
@@ -138,15 +150,14 @@ def cifar10_loader(
         g = torch.Generator()
         g.manual_seed(seed)
         perm = torch.randperm(len(dataset), generator=g)
-        dataset = Subset(dataset, perm[:n_samples])
+        dataset = Subset(dataset, perm[:n_samples].tolist())
 
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
-        shuffle=shuffle if n_samples is None else False,
+        shuffle=shuffle,  # FIX: always respect caller's shuffle argument
         num_workers=num_workers,
         pin_memory=pin_memory
     )
 
     return loader
-

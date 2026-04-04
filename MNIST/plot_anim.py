@@ -8,19 +8,18 @@ import tempfile
 from matplotlib.lines import Line2D
 
 # ====== CONFIGURATION ======
-plot_id = 'N1_1e-4'
+plot_id = 'testing'
 epochs = list(range(50, 2000, 50))
-yscale = 'log'
+yscale = 'linear'
 save_path = f'loss_sv_{plot_id}_{yscale}_animated.gif'
-fps = 3  # frames per second
+fps = 3
 
 # ====== LOAD ALL DATA UPFRONT ======
 dir_name = f'./models/{plot_id}/metrics'
 sv_dir = f'./models/{plot_id}/singular_values'
 print(f"Reading: {dir_name}")
 
-# all_data[epoch] = {width, test_losses, train_losses, sv_min}
-all_data = {epoch: {'width': [], 'test_losses': [], 'train_losses': [], 'sv_min': []}
+all_data = {epoch: {'width': [], 'test_losses': [], 'train_losses': [], 'sv_train': [], 'sv_test': []}
             for epoch in epochs}
 n_samples = None
 
@@ -50,13 +49,15 @@ for filename in os.listdir(dir_name):
             if not os.path.exists(sv_filepath):
                 continue
 
-            sv = torch.load(sv_filepath, weights_only=True)['train']
-            sv_mean = float(sv.mean())
+            sv = torch.load(sv_filepath, weights_only=True)
+            sv_mean_train = float(sv['train'].min())
+            sv_mean_test  = float(sv['test'].min())
 
             all_data[epoch]['width'].append(width)
             all_data[epoch]['train_losses'].append(data[train_key])
             all_data[epoch]['test_losses'].append(data[test_key])
-            all_data[epoch]['sv_min'].append(sv_mean)
+            all_data[epoch]['sv_train'].append(sv_mean_train)
+            all_data[epoch]['sv_test'].append(sv_mean_test)
 
     except (json.JSONDecodeError, KeyError) as e:
         print(f"Error reading {filename}: {e}")
@@ -70,23 +71,26 @@ for epoch in epochs:
         d['width']        = np.array(d['width'])[idx]
         d['test_losses']  = np.array(d['test_losses'])[idx]
         d['train_losses'] = np.array(d['train_losses'])[idx]
-        d['sv_min']       = np.array(d['sv_min'])[idx]
+        d['sv_train']     = np.array(d['sv_train'])[idx]
+        d['sv_test']      = np.array(d['sv_test'])[idx]
 
-# ====== COMPUTE GLOBAL AXIS LIMITS for stable animation ======
+# ====== COMPUTE GLOBAL AXIS LIMITS ======
 all_widths_flat = np.unique(np.concatenate(
     [d['width'] for d in all_data.values() if len(d['width']) > 0]
 ))
-all_test   = np.concatenate([d['test_losses']  for d in all_data.values() if len(d['test_losses'])  > 0])
-all_train  = np.concatenate([d['train_losses'] for d in all_data.values() if len(d['train_losses']) > 0])
-all_sv     = np.concatenate([d['sv_min']       for d in all_data.values() if len(d['sv_min'])       > 0])
+all_test      = np.concatenate([d['test_losses']  for d in all_data.values() if len(d['test_losses'])  > 0])
+all_train     = np.concatenate([d['train_losses'] for d in all_data.values() if len(d['train_losses']) > 0])
+all_sv_train  = np.concatenate([d['sv_train']     for d in all_data.values() if len(d['sv_train'])     > 0])
+all_sv_test   = np.concatenate([d['sv_test']      for d in all_data.values() if len(d['sv_test'])      > 0])
 
 loss_ymin = min(np.min(all_test), np.min(all_train)) * 0.8
 loss_ymax = max(np.max(all_test), np.max(all_train)) * 1.2
-sv_ymin   = np.min(all_sv) * 0.8
-sv_ymax   = np.max(all_sv) * 1.2
+sv_ymin   = min(np.min(all_sv_train), np.min(all_sv_test)) * 0.8
+sv_ymax   = max(np.max(all_sv_train), np.max(all_sv_test)) * 1.2
 
-cmap = plt.cm.viridis
-norm = plt.Normalize(vmin=min(all_widths_flat), vmax=max(all_widths_flat))
+# ====== FIXED COLORS ======
+TEST_COLOR  = 'red'
+TRAIN_COLOR = 'blue'
 
 # ====== GENERATE FRAMES ======
 print(f"Generating {len(epochs)} frames...")
@@ -104,19 +108,17 @@ for epoch in epochs:
     width        = d['width']
     test_losses  = d['test_losses']
     train_losses = d['train_losses']
-    sv_min       = d['sv_min']
+    sv_train     = d['sv_train']
+    sv_test      = d['sv_test']
 
-    # Left axis: losses
-    for i, w in enumerate(width):
-        color = cmap(norm(w))
-        if i < len(width) - 1:
-            ax1.plot(width[i:i+2], test_losses[i:i+2],  linestyle='-',  linewidth=2,   alpha=0.8, color=color)
-            ax1.plot(width[i:i+2], train_losses[i:i+2], linestyle=':',  linewidth=2,   alpha=0.6, color=color)
-        ax1.scatter(w, test_losses[i],  s=40, alpha=0.8, zorder=5, color=color)
-        ax1.scatter(w, train_losses[i], s=40, alpha=0.6, marker='^', zorder=5, color=color)
+    # Left axis: losses — solid lines
+    ax1.plot(width, test_losses,  linestyle='-', linewidth=2,   alpha=0.85, color=TEST_COLOR)
+    ax1.plot(width, train_losses, linestyle='-', linewidth=2,   alpha=0.85, color=TRAIN_COLOR)
+    ax1.scatter(width, test_losses,  s=40, alpha=0.9, zorder=5, color=TEST_COLOR)
+    ax1.scatter(width, train_losses, s=40, alpha=0.9, zorder=5, color=TRAIN_COLOR)
 
     if n_samples is not None:
-        ax1.axvline(x=n_samples, color='red', linestyle='--', linewidth=1.5, alpha=0.8)
+        ax1.axvline(x=n_samples, color='black', linestyle='--', linewidth=1.5, alpha=0.8)
 
     ax1.set_xlabel('Model Width', fontsize=11)
     ax1.set_ylabel(f'Loss ({yscale})', fontsize=11, color='black')
@@ -127,27 +129,27 @@ for epoch in epochs:
     ax1.set_ylim(loss_ymin, loss_ymax)
     ax1.grid(True, alpha=0.3)
 
-    # Right axis: mean SV
+    # Right axis: mean SVs — dashed lines, red=test SV, blue=train SV
     ax2 = ax1.twinx()
-    for i, w in enumerate(width):
-        color = cmap(norm(w))
-        if i < len(width) - 1:
-            ax2.plot(width[i:i+2], sv_min[i:i+2], linestyle='-.', linewidth=2.5, alpha=0.7, color=color)
-        ax2.scatter(w, sv_min[i], s=60, alpha=0.7, marker='s', zorder=5, color=color)
+    ax2.plot(width, sv_test,  linestyle='--', linewidth=2.5, alpha=0.8, color=TEST_COLOR)
+    ax2.plot(width, sv_train, linestyle='--', linewidth=2.5, alpha=0.8, color=TRAIN_COLOR)
+    ax2.scatter(width, sv_test,  s=60, alpha=0.8, marker='s', zorder=5, color=TEST_COLOR)
+    ax2.scatter(width, sv_train, s=60, alpha=0.8, marker='s', zorder=5, color=TRAIN_COLOR)
 
-    ax2.set_ylabel('Mean Singular Value', fontsize=11, color='purple')
-    ax2.tick_params(axis='y', labelcolor='purple', labelsize=8)
+    ax2.set_ylabel('Mean Singular Value', fontsize=11, color='black')
+    ax2.tick_params(axis='y', labelcolor='black', labelsize=8)
     ax2.set_yscale('log')
     ax2.set_ylim(sv_ymin, sv_ymax)
 
     # Legend
     legend_elements = [
-        Line2D([0], [0], color='gray', linewidth=2,   linestyle='-',  label='Test Loss'),
-        Line2D([0], [0], color='gray', linewidth=2,   linestyle=':',  label='Train Loss'),
-        Line2D([0], [0], color='gray', linewidth=2.5, linestyle='-.', label='Mean SV'),
-        Line2D([0], [0], color='red',  linewidth=1.5, linestyle='--', label=f'n_samples={n_samples}'),
+        Line2D([0], [0], color=TEST_COLOR,  linewidth=2,   linestyle='-',  label='Test Loss'),
+        Line2D([0], [0], color=TRAIN_COLOR, linewidth=2,   linestyle='-',  label='Train Loss'),
+        Line2D([0], [0], color=TEST_COLOR,  linewidth=2.5, linestyle='--', label='Test Mean SV'),
+        Line2D([0], [0], color=TRAIN_COLOR, linewidth=2.5, linestyle='--', label='Train Mean SV'),
+        Line2D([0], [0], color='black',     linewidth=1.5, linestyle='--', label=f'n_samples={n_samples}'),
     ]
-    ax1.legend(handles=legend_elements, fontsize=8, loc='lower left')
+    ax1.legend(handles=legend_elements, fontsize=8, loc='upper right')
 
     plt.title(f'{plot_id}  |  Epoch {epoch}', fontsize=13, fontweight='bold')
     fig.tight_layout()

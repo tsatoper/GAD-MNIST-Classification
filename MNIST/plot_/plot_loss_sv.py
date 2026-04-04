@@ -3,7 +3,7 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-plot_id = 'ddtrueN2' 
+plot_id = 'mse' 
 
 # Define epochs to plot
 epochs = [2000]
@@ -15,7 +15,7 @@ all_data = {plot_id: {epoch: {'width': [], 'test_losses': [], 'train_losses': []
                       for epoch in epochs}}
 
 # Read all JSON files for each plot_id
-dir_name = f'./models/{plot_id}/metrics'
+dir_name = f'../models/{plot_id}/metrics'
 print(dir_name)
 
 
@@ -27,7 +27,7 @@ for filename in os.listdir(dir_name):
         try:
             with open(filepath, 'r') as f:
                 data = json.load(f)
-            width = data['width']
+            width = data['hidden']
             # Extract metrics for each epoch
             for epoch in epochs:
                 train_key = f'epoch{epoch}_train_loss'

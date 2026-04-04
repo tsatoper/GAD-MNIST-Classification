@@ -31,15 +31,15 @@ parser.add_argument('--noise', type=float, default=0.0)
 
 
 args = parser.parse_args()
-width = [i for i in range(1, 8+1)][args.array_idx]
+width = [4*i for i in range(1, 16+1)][args.array_idx]
 filename = f"w{width}_job{args.job_num[:7]}"
 num_epochs = args.epochs
-samples = args.n_samples if args.n_samples is not None else 60000
+samples = args.n_samples if args.n_samples is not None else 50000
 learning_rate = args.learning_rate
 
 
-save_at_this_epoch = list(range(50, num_epochs + 1, 50))
-batch_size = 512
+save_at_this_epoch = [1]+list(range(50, num_epochs + 1, 50))
+batch_size = 128
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_fn = nn.MSELoss()
 

@@ -5,12 +5,16 @@ import torch.nn.functional as F
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Subset
 
+
 class FCNN(nn.Module):
     def __init__(self, input_dim=784, hidden_dim=100, output_dim=10):
         super().__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
         self.fc2 = nn.Linear(hidden_dim, output_dim)
-
+        with torch.no_grad():
+            self.fc1.weight.mul_(10)
+            self.fc2.weight.mul_(10)
+            
     def forward(self, x, return_hidden=False):
         x = x.view(x.size(0), -1)  # Flatten (N, 1, 28, 28) → (N, 784)
         x = self.fc1(x)
@@ -18,9 +22,12 @@ class FCNN(nn.Module):
         out = self.fc2(hidden)
         if return_hidden:
             return out, hidden
-
         return out
-        
+
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, Subset
+
+
 def mnist_loader(
     train=True,
     n_samples=None,
@@ -57,20 +64,18 @@ def mnist_loader(
         n_corrupt = int(noise * N)
 
         perm = torch.randperm(N, generator=g)
-        corrupt_idx = perm[:n_corrupt]
+        corrupt_idx = perm[:n_corrupt].tolist()  # FIX: convert to plain ints
 
         num_classes = 10
 
         for idx in corrupt_idx:
             original = targets[idx].item()
-            new_label = torch.randint(
-                0, num_classes - 1, (1,), generator=g
-            ).item()
-
-            # ensure different class
+            # FIX: sample from [0, num_classes - 2] then remap to avoid
+            # the original class, giving a uniform distribution over the
+            # other num_classes-1 classes instead of over-representing class 9.
+            new_label = torch.randint(0, num_classes - 1, (1,), generator=g).item()
             if new_label >= original:
                 new_label += 1
-
             targets[idx] = new_label
 
         dataset.targets = targets.tolist()
@@ -86,12 +91,12 @@ def mnist_loader(
         g.manual_seed(seed)
 
         perm = torch.randperm(len(dataset), generator=g)
-        dataset = Subset(dataset, perm[:n_samples])
+        dataset = Subset(dataset, perm[:n_samples].tolist())
 
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
-        shuffle=shuffle if n_samples is None else False,
+        shuffle=shuffle,   # FIX: always respect caller's shuffle argument
         num_workers=num_workers,
         pin_memory=pin_memory
     )
@@ -201,3 +206,5 @@ def save_hidden_activations(model, train_loader, test_loader, device, filename, 
 
     return acts_path, sv_path, sv_mean
    
+
+

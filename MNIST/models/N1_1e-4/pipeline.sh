@@ -6,7 +6,7 @@
 #PBS -l walltime=11:59:00
 #PBS -j oe
 # qsub -J 0-14 pipeline.sh
-# qsub -v PBS_ARRAY_INDEX=5 pipeline.sh
+# qsub -v PBS_ARRAY_INDEX=0 pipeline.sh
 
 
 module load conda  
@@ -22,7 +22,7 @@ python -u /glade/derecho/scratch/tsatoperry/GAD/MNIST/pipeline.py \
     --learning-rate 0.0001 \
     --n-samples 1000 \
     --gamma 1.0 \
-    --epochs 2000
+    --epochs 10000
 
 
 # N1 = 1000

@@ -23,7 +23,8 @@ python -u /glade/derecho/scratch/tsatoperry/GAD/MNIST/pipeline.py \
     --n-samples 4000 \
     --gamma 1.0 \
     --epochs 2000 \
-    --noise 0.15
+    --noise 0.0 \
+    --weight-decay 0.00001 
 
 
 # N1 = 1000
