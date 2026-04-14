@@ -39,7 +39,7 @@ learning_rate = args.learning_rate
 
 
 save_at_this_epoch = [1]+list(range(50, num_epochs + 1, 50))
-batch_size = 128
+batch_size = 1024
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_fn = nn.MSELoss()
 

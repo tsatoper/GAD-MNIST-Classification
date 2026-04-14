@@ -3,7 +3,7 @@
 #PBS -N oCIFAR10
 #PBS -q main           
 #PBS -l select=1:ncpus=4:ngpus=1:mem=8GB
-#PBS -l walltime=02:59:00
+#PBS -l walltime=05:59:00
 #PBS -j oe
 # qsub -J 0-15 pipeline.sh
 # qsub -v PBS_ARRAY_INDEX=2 pipeline.sh
@@ -18,7 +18,7 @@ echo "Job started at $(date)"
 python -u /glade/derecho/scratch/tsatoperry/GAD/RESNET18/pipeline.py \
     --array-idx $PBS_ARRAY_INDEX \
     --job-num $PBS_JOBID \
-    --output-dir /glade/derecho/scratch/tsatoperry/GAD/RESNET18/models/s50k_n15 \
+    --output-dir /glade/derecho/scratch/tsatoperry/GAD/RESNET18/models/main \
     --learning-rate 0.0001 \
     --n-samples 50000 \
     --gamma 1.0 \
